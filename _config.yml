@@ -13,14 +13,13 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: "Tech Blog"
+title: "Jaehun Shon"
 url: "https://manfromearth11.github.io"
 baseurl: ""
-email: "wognswogns3471@gmail.com"
+email: "manfromearth@yonsei.ac.kr"
 description: >- # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
+  Jaehun Shon — M.S. student in Artificial Intelligence at Yonsei University.
+  Research in reinforcement learning at DILLab.
 twitter_username: [NA]
 github_username: manfromearth11
 minimal_mistakes_skin: default
@@ -71,8 +70,8 @@ plugins:
 
 author:
   name   : "Jaehun Shon"
-  avatar : "/assets/images/bio-photo.jpg"
-  bio    : "My awesome biography constrained to a sentence or two goes here."
+  avatar : ""
+  bio    : "M.S. student in AI at Yonsei University. Reinforcement learning, DILLab."
   links:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"

@@ -1,0 +1,55 @@
+# Edit this file to update the homepage. Leave optional fields empty to hide them.
+name: Jaehun Shon
+role: M.S. student
+email: manfromearth@yonsei.ac.kr
+github: https://github.com/manfromearth11
+# Use a local path, e.g. /assets/images/jaehun.jpg, for your own portrait.
+photo: /assets/images/jaehun-casual.png
+institution: Yonsei University
+department: Department of Artificial Intelligence
+location: Seoul, South Korea
+advisor_name: Prof. Jongmin Lee
+advisor_url: https://www.jmlee.kr/
+phone: ""
+cv: ""
+scholar: ""
+linkedin: https://www.linkedin.com/in/jaehun-shon
+lab_name: DILLab
+lab_url: https://dil.yonsei.ac.kr/
+# Markdown is supported in the introduction and research statement.
+introduction: >-
+  I am an **M.S. student in Artificial Intelligence** at
+  [Yonsei University](https://www.yonsei.ac.kr/),
+  working in the [Decision Intelligence & Learning Lab (DILLab)](https://dil.yonsei.ac.kr/).
+research: >-
+  My research interests lie in **reinforcement learning** and **optimal transport**.
+# Example interest: Reinforcement learning
+interests:
+  - Reinforcement Learning
+  - Optimal Transport
+# Add real entries below; empty sections are automatically hidden.
+news: []
+# - date: Sep 2026
+#   text: Your update here.
+publications:
+  - title: Learning Multimodal One-step Flow Policy via Value-weighted Optimal Transport
+    authors: Jaehun Shon*, Jinha Choi*, Jongwook Jeon, Jongmin Lee†
+    venue: arXiv preprint · 2026
+    description: "OptiFlow uses value-weighted optimal transport to train efficient one-step flow policies that preserve high-value, multimodal behavior in offline reinforcement learning."
+    paper: https://arxiv.org/abs/2609.15883
+    code: https://github.com/Yonsei-DILLab/OptiFlow
+# - title: Paper title
+#   authors: Jaehun Shon, Coauthor
+#   venue: Conference, year
+#   description: A short summary of the work.
+#   paper: https://...
+#   code: https://...
+#   image: /assets/images/paper.jpg
+education:
+  - degree: M.S. in Artificial Intelligence
+    institution: Yonsei University
+    dates: Sep 2026 – Present
+  - degree: B.S. in Applied Statistics
+    institution: Yonsei University
+    dates: Mar 2021 – Aug 2026
+# Optional additional entries may include a detail field.

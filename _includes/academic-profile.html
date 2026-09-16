@@ -1,0 +1,52 @@
+{% assign p = site.data.profile %}
+<div class="academic-grid" id="top">
+  <aside class="profile" aria-label="Profile">
+    {% if p.photo != '' %}
+    <img class="portrait portrait-casual" src="{{ p.photo | relative_url }}" alt="{{ p.name | escape }}" width="108" height="144">
+    {% else %}
+    <img class="portrait" src="{{ '/assets/images/bio-photo.jpg' | relative_url }}" alt="" width="184" height="184">
+    {% endif %}
+    <h1>{{ p.name | escape }}</h1>
+    <p class="role">{{ p.role | escape }}</p>
+    {% if p.department != '' %}<p class="affiliation">{{ p.department | escape }}</p>{% endif %}
+    {% if p.institution != '' %}<p class="affiliation">{{ p.institution | escape }}</p>{% endif %}
+    {% if p.lab_name != '' %}<p class="lab"><a href="{{ p.lab_url | escape }}">{{ p.lab_name | escape }} <span aria-hidden="true">↗</span></a></p>{% endif %}
+    {% if p.location != '' %}<p class="location">{{ p.location | escape }}</p>{% endif %}
+    <div class="profile-links">
+      {% if p.email != '' %}<a href="mailto:{{ p.email | escape }}">Email <span aria-hidden="true">↗</span></a>{% endif %}
+      {% if p.github != '' %}<a href="{{ p.github | escape }}">GitHub <span aria-hidden="true">↗</span></a>{% endif %}
+      {% if p.linkedin != '' %}<a href="{{ p.linkedin | escape }}">LinkedIn <span aria-hidden="true">↗</span></a>{% endif %}
+      {% if p.scholar != '' %}<a href="{{ p.scholar | escape }}">Google Scholar <span aria-hidden="true">↗</span></a>{% endif %}
+      {% if p.cv != '' %}<a href="{{ p.cv | relative_url }}">Curriculum vitae <span aria-hidden="true">↗</span></a>{% endif %}
+    </div>
+    {% if p.interests.size > 0 %}<div class="interests"><h2>Research interests</h2>{% for interest in p.interests %}<span>{{ interest | escape }}</span>{% endfor %}</div>{% endif %}
+  </aside>
+  <main id="main">
+    <section id="about" class="about-section" aria-labelledby="about-title">
+      <div class="section-kicker"><span class="accent-line"></span> About me</div>
+      <h2 id="about-title">Hello, I'm Jaehun<span class="accent">.</span></h2>
+      <div class="introduction prose">{{ p.introduction | markdownify }}</div>
+      {% if p.advisor_name != '' %}<p class="prose">I am advised by {% if p.advisor_url != '' %}<a href="{{ p.advisor_url | escape }}">{{ p.advisor_name | escape }}</a>{% else %}{{ p.advisor_name | escape }}{% endif %}.</p>{% endif %}
+      <div class="about-meta"><span class="status-dot" aria-hidden="true"></span>{{ p.role | escape }}{% if p.institution != '' %}<span class="meta-divider">/</span>{{ p.institution | escape }}{% endif %}</div>
+    </section>
+    {% if p.research != '' or p.publications.size > 0 %}
+    <section id="research" aria-labelledby="research-title">
+      <div class="section-heading"><h2 id="research-title">Research</h2><span class="section-rule"></span></div>
+      {% if p.research != '' %}<div class="prose">{{ p.research | markdownify }}</div>{% endif %}
+      {% if p.publications.size > 0 %}<h3 class="publications-label">Publications <span>{{ p.publications.size | prepend: '0' }}</span></h3>{% endif %}
+      {% for paper in p.publications %}
+      <article class="publication{% if paper.image %} with-image{% endif %}">
+        {% if paper.image %}<img src="{{ paper.image | relative_url }}" alt="Figure for {{ paper.title | escape }}" loading="lazy">{% endif %}
+        <div><h3>{% if paper.paper %}<a href="{{ paper.paper | escape }}">{{ paper.title | escape }}</a>{% else %}{{ paper.title | escape }}{% endif %}</h3>
+        <p class="authors">{{ paper.authors | escape | replace: p.name, '<strong>Jaehun Shon</strong>' }}</p><p class="venue">{{ paper.venue | escape }}</p>
+        {% if paper.description %}<p>{{ paper.description | escape }}</p>{% endif %}
+        <div class="paper-links">{% if paper.paper %}<a href="{{ paper.paper | escape }}">Paper ↗</a>{% endif %}{% if paper.code %}<a href="{{ paper.code | escape }}">Code ↗</a>{% endif %}</div></div>
+      </article>{% endfor %}
+    </section>{% endif %}
+    {% if p.news.size > 0 %}<section aria-labelledby="news-title"><div class="section-heading"><h2 id="news-title">News</h2><span class="section-rule"></span></div><dl class="news-list">{% for item in p.news %}<div><dt>{{ item.date | escape }}</dt><dd>{{ item.text | markdownify }}</dd></div>{% endfor %}</dl></section>{% endif %}
+    <section id="education" aria-labelledby="education-title">
+      <div class="section-heading"><h2 id="education-title">Education</h2><span class="section-rule"></span></div>
+      {% for item in p.education %}<div class="education-entry"><div><h3>{{ item.degree | escape }}</h3>{% if item.institution != '' %}<p>{{ item.institution | escape }}</p>{% endif %}{% if item.detail %}<p class="education-detail">{{ item.detail | escape }}</p>{% endif %}</div><span class="education-date">{{ item.dates | escape }}</span></div>{% endfor %}
+    </section>
+  </main>
+</div>
