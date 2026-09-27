@@ -34,7 +34,7 @@ news: []
 publications:
   - title: Learning Multimodal One-step Flow Policy via Value-weighted Optimal Transport
     authors: Jaehun Shon*, Jinha Choi*, Jongwook Jeon, Jongmin Lee†
-    venue: arXiv preprint · 2026
+    venue: NeurIPS 2026
     description: "OptiFlow uses value-weighted optimal transport to train efficient one-step flow policies that preserve high-value, multimodal behavior in offline reinforcement learning."
     paper: https://arxiv.org/abs/2609.15883
     code: https://github.com/Yonsei-DILLab/OptiFlow
