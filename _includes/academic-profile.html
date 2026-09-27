@@ -2,7 +2,7 @@
 <div class="academic-grid" id="top">
   <aside class="profile" aria-label="Profile">
     {% if p.photo != '' %}
-    <img class="portrait portrait-casual" src="{{ p.photo | relative_url }}" alt="{{ p.name | escape }}" width="108" height="144">
+    <img class="portrait portrait-spacious" src="{{ p.photo | relative_url }}" alt="{{ p.name | escape }}" width="144" height="180">
     {% else %}
     <img class="portrait" src="{{ '/assets/images/bio-photo.jpg' | relative_url }}" alt="" width="184" height="184">
     {% endif %}

@@ -626,19 +626,21 @@ section + section {
   margin-top: 10px;
 }
 
-/* Show the full photo in a compact rectangular frame. */
-.portrait.portrait-casual {
-  width: 108px;
-  height: 144px;
+/* White space around the original portrait keeps the face understated. */
+.portrait.portrait-spacious {
+  width: 144px;
+  height: 180px;
   object-fit: contain;
   object-position: center;
   border-radius: 4px;
-  padding: 0;
+  padding: 24px;
+  background: #fff;
   display: block;
 }
 @media (max-width: 620px) {
-  .portrait.portrait-casual {
-    width: 60px;
-    height: 80px;
+  .portrait.portrait-spacious {
+    width: 80px;
+    height: 100px;
+    padding: 13px;
   }
 }
