@@ -6,7 +6,7 @@ GitHub Pages / Jekyll 기반의 개인 연구자 홈페이지입니다. 별도�
 
 `_data/profile.yml`에서 소개, 소속, 이메일, 외부 링크, 연구 소개, 논문과 학력을 수정합니다.
 
-- `photo`: 프로필 사진 경로. 현재 `assets/images/jaehun-profile.png`를 흰 여백이 있는 작은 세로 사각형으로 표시합니다. 비워 두면 기본 사람 실루엣을 표시합니다.
+- `photo`: 프로필 사진 경로. 현재 `assets/images/jaehun-casual.png`를 상반신이 보이는 작은 세로 사각형으로 표시합니다. 비워 두면 기본 사람 실루엣을 표시합니다.
 - `publications`: 논문 제목, 저자, 출판 정보, 요약, Paper/Code 링크. 공동 기여 저자는 이름 뒤에 `*`를 붙입니다.
 - `cv`, `scholar`, `phone`: 빈 문자열이면 표시하지 않습니다. CV를 추가하려면 PDF를 저장하고 경로를 입력합니다.
 - `news`: 날짜와 내용을 추가하면 News 섹션이 표시됩니다.
