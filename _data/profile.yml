@@ -3,6 +3,7 @@ name: Jaehun Shon
 role: M.S. student
 email: manfromearth@yonsei.ac.kr
 github: https://github.com/manfromearth11
+blog: https://manfromearth1.tistory.com/
 # Use a local path, e.g. /assets/images/jaehun.jpg, for your own portrait.
 photo: /assets/images/jaehun-2026.png
 institution: Yonsei University
@@ -22,11 +23,12 @@ introduction: >-
   [Yonsei University](https://www.yonsei.ac.kr/),
   working in the [Decision Intelligence & Learning Lab (DILLab)](https://dil.yonsei.ac.kr/).
 research: >-
-  My research interests lie in **reinforcement learning** and **optimal transport**.
+  Focused on Online/Offline Reinforcement Learning and efficient generative methods,
+  especially one-step generation for low-latency inference.
 # Example interest: Reinforcement learning
 interests:
   - Reinforcement Learning
-  - Optimal Transport
+  - Generative Modeling
 # Add real entries below; empty sections are automatically hidden.
 news: []
 # - date: Sep 2026

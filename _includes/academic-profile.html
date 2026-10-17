@@ -16,6 +16,7 @@
       {% if p.email != '' %}<a href="mailto:{{ p.email | escape }}">Email <span aria-hidden="true">↗</span></a>{% endif %}
       {% if p.github != '' %}<a href="{{ p.github | escape }}">GitHub <span aria-hidden="true">↗</span></a>{% endif %}
       {% if p.linkedin != '' %}<a href="{{ p.linkedin | escape }}">LinkedIn <span aria-hidden="true">↗</span></a>{% endif %}
+      {% if p.blog and p.blog != '' %}<a href="{{ p.blog | escape }}">Blog <span aria-hidden="true">↗</span></a>{% endif %}
       {% if p.scholar != '' %}<a href="{{ p.scholar | escape }}">Google Scholar <span aria-hidden="true">↗</span></a>{% endif %}
       {% if p.cv != '' %}<a href="{{ p.cv | relative_url }}">Curriculum vitae <span aria-hidden="true">↗</span></a>{% endif %}
     </div>
