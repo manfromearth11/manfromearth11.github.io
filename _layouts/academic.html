@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ site.data.profile.name | escape }} — {{ site.data.profile.role | escape }}</title>
-  <meta name="description" content="{{ site.description | strip_newlines | escape }}">
+  <title>{% if page.title %}{{ page.title | escape }} — {{ site.data.profile.name | escape }}{% else %}{{ site.data.profile.name | escape }} — {{ site.data.profile.role | escape }}{% endif %}</title>
+  <meta name="description" content="{{ page.description | default: site.description | strip_newlines | escape }}">
   <meta name="theme-color" content="#f8f7f3">
-  <meta property="og:title" content="{{ site.data.profile.name | escape }}">
-  <meta property="og:description" content="{{ site.description | strip_newlines | escape }}">
+  <meta property="og:title" content="{{ page.title | default: site.data.profile.name | escape }}">
+  <meta property="og:description" content="{{ page.description | default: site.description | strip_newlines | escape }}">
   <meta property="og:type" content="website">
   <meta property="og:url" content="{{ page.url | absolute_url }}">
   <link rel="canonical" href="{{ page.url | absolute_url }}">
@@ -21,9 +21,10 @@
     <header class="masthead">
       <a class="wordmark" href="{{ '/' | relative_url }}">{{ p.name | escape }}<span class="wordmark-dot">.</span></a>
       <nav aria-label="Main navigation">
-        <a href="#about">About</a>
-        {% if p.research != '' or p.publications.size > 0 %}<a href="#research">Research</a>{% endif %}
-        <a href="#education">Education</a>
+        <a href="{{ '/' | relative_url }}#about">About</a>
+        {% if p.research != '' or p.publications.size > 0 %}<a href="{{ '/' | relative_url }}#research">Research</a>{% endif %}
+        <a href="{{ '/' | relative_url }}#education">Education</a>
+        <a href="{{ '/demos/' | relative_url }}">Demos</a>
         {% if p.cv != '' %}<a href="{{ p.cv | relative_url }}">CV <span aria-hidden="true">↗</span></a>{% endif %}
       </nav>
     </header>
