@@ -5,13 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% if page.title %}{{ page.title | escape }} — {{ site.data.profile.name | escape }}{% else %}{{ site.data.profile.name | escape }} — {{ site.data.profile.role | escape }}{% endif %}</title>
   <meta name="description" content="{{ page.description | default: site.description | strip_newlines | escape }}">
-  <meta name="theme-color" content="#f8f7f3">
+  <meta name="theme-color" content="#202831">
   <meta property="og:title" content="{{ page.title | default: site.data.profile.name | escape }}">
   <meta property="og:description" content="{{ page.description | default: site.description | strip_newlines | escape }}">
   <meta property="og:type" content="website">
   <meta property="og:url" content="{{ page.url | absolute_url }}">
   <link rel="canonical" href="{{ page.url | absolute_url }}">
   <link rel="icon" href="{{ '/assets/images/favicon.svg' | relative_url }}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ '/assets/css/academic.css' | relative_url }}?v={{ site.time | date: '%s' }}">
 </head>
 <body>
@@ -19,19 +22,17 @@
   {% assign p = site.data.profile %}
   <div class="site-shell">
     <header class="masthead">
-      <a class="wordmark" href="{{ '/' | relative_url }}">{{ p.name | escape }}<span class="wordmark-dot">.</span></a>
+      <a class="wordmark" href="{{ '/' | relative_url }}">{{ p.institution | upcase | escape }} / {{ p.lab_name | upcase | escape }}</a>
       <nav aria-label="Main navigation">
         <a href="{{ '/' | relative_url }}#about">About</a>
-        {% if p.research != '' or p.publications.size > 0 %}<a href="{{ '/' | relative_url }}#research">Research</a>{% endif %}
-        <a href="{{ '/' | relative_url }}#education">Education</a>
+        {% if p.blog and p.blog != '' %}<a href="{{ p.blog | escape }}">Blog</a>{% endif %}
         <a href="{{ '/demos/' | relative_url }}">Demos</a>
         {% if p.cv != '' %}<a href="{{ p.cv | relative_url }}">CV <span aria-hidden="true">↗</span></a>{% endif %}
       </nav>
     </header>
     {{ content }}
     <footer class="site-footer">
-      <span>© {{ 'now' | date: '%Y' }} {{ p.name | escape }}</span>
-      <span class="footer-note">Personal academic website</span>
+      <span>© {{ 'now' | date: '%Y' }} {{ p.name | upcase | escape }}</span>
       <a href="#top">Back to top <span aria-hidden="true">↑</span></a>
     </footer>
   </div>

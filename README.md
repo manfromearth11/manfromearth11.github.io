@@ -1,6 +1,6 @@
 # Jaehun Shon · Academic website
 
-GitHub Pages / Jekyll 기반의 개인 연구자 홈페이지입니다. 별도의 JavaScript나 프런트엔드 빌드 없이 동작합니다.
+GitHub Pages / Jekyll 기반의 개인 연구자 홈페이지입니다. 잉크 네이비 배경과 구리색 포인트, IBM Plex Mono 제목과 IBM Plex Sans 본문을 사용합니다. 별도의 JavaScript나 프런트엔드 빌드 없이 동작합니다.
 
 ## 내용 수정
 

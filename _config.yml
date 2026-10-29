@@ -19,7 +19,7 @@ baseurl: ""
 email: "manfromearth@yonsei.ac.kr"
 description: >- # this means to ignore newlines until "baseurl:"
   Jaehun Shon — M.S. student in Artificial Intelligence at Yonsei University.
-  Research in reinforcement learning and generative modeling at DILLab.
+  Research in reinforcement learning at DILLab.
 twitter_username: [NA]
 github_username: manfromearth11
 minimal_mistakes_skin: default
