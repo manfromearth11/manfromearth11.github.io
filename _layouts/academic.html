@@ -26,7 +26,7 @@
       <nav aria-label="Main navigation">
         <a href="{{ '/' | relative_url }}#about">About</a>
         {% if p.blog and p.blog != '' %}<a href="{{ p.blog | escape }}">Blog</a>{% endif %}
-        <a href="{{ '/demos/' | relative_url }}">Demos</a>
+        <a href="{{ '/posts/' | relative_url }}">Posts</a>
         {% if p.cv != '' %}<a href="{{ p.cv | relative_url }}">CV <span aria-hidden="true">↗</span></a>{% endif %}
       </nav>
     </header>

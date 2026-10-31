@@ -49,3 +49,13 @@ another browser/device. Markdown ZIP export includes relative `images/` assets.
 Browser data removal also removes drafts. The editor dependencies are pinned on
 jsDelivr, so loading the editor requires internet access. Public note listing and
 OAuth-backed publication are a separate next step.
+
+Image layouts: use **Add image layout** to choose Full width, Float right, or Two
+columns, with a caption and Markdown/TeX description. Existing layouts can be
+reopened via **Edit layout**. Layout blocks are stored as HTML within Markdown;
+use the included `note.html` and `note-layout.css` to view their exported layout.
+Mobile layouts stack vertically. Layout metadata also survives JSON backups.
+**Add video** embeds a direct HTTPS MP4/WebM URL; it does not upload local videos.
+
+Public notes and videos are listed at `/posts/`. The existing RL-YAI video is at
+`/posts/rl-yai/`; the old `/demos/` URLs redirect to the corresponding Posts pages.

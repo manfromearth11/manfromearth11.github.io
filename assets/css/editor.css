@@ -24,3 +24,15 @@ body:has(.write-page) .site-shell { max-width: 1440px; }
 #note-editor .vditor-reset table tr { background: var(--paper); }
 #note-editor .vditor-reset table tr:nth-child(2n) { background: #28333e; }
 #note-editor .vditor-reset table th, #note-editor .vditor-reset table td { border-color: var(--line); }
+#figure-dialog { background: var(--paper); color: var(--ink); border: 1px solid var(--line); width: min(960px,94vw); max-height: 90vh; padding: 24px; }
+#figure-dialog::backdrop { background: #0009; }
+#figure-form label { display: block; font-size: 13px; margin: 12px 0; }
+#figure-form input, #figure-form textarea { display: block; width: 100%; padding: 10px; background: #28333e; color: var(--ink); border: 1px solid var(--line); font: inherit; }
+#figure-form select { margin-left: 12px; }
+#figure-dialog button, #figure-dialog select { padding: 8px 12px; background: #28333e; color: var(--ink); border: 1px solid var(--line); cursor: pointer; }
+#figure-drop { border: 1px dashed var(--muted); padding: 16px; margin: 12px 0; font-size: 13px; }
+#figure-preview { padding: 16px; border: 1px solid var(--line); color: var(--ink); }
+.layout-hint, #figure-status { font-size: 13px; color: var(--muted); margin: 12px 0; }
+#figure-form input[hidden] { display: none; }
+#video-url { width: min(100%,560px); background: #28333e; color: var(--ink); border: 1px solid var(--line); padding: 8px; margin: 10px 0; }
+#note-editor video { max-width: 100%; }

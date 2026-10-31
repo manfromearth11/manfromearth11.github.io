@@ -1,0 +1,20 @@
+/* Shared by the editor preview and exported notes. */
+.note-figure { display: flow-root; margin: 24px 0; }
+.note-figure figure { margin: 0 0 16px; min-width: 0; }
+.note-figure figure img { display: block; width: 100%; height: auto; }
+.note-figure figcaption { font-size: .85em; opacity: .8; margin-top: 8px; }
+.note-figure article { min-width: 0; overflow-wrap: anywhere; }
+.note-figure article > :first-child { margin-top: 0; }
+.note-figure--columns { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,45%); gap: 24px; align-items: start; }
+.note-figure--columns figure { grid-column: 2; grid-row: 1; }
+.note-figure--columns article { grid-column: 1; grid-row: 1; }
+.note-figure--columns.note-figure--35 { grid-template-columns: minmax(0,1fr) minmax(0,35%); }
+.note-figure--columns.note-figure--55 { grid-template-columns: minmax(0,1fr) minmax(0,55%); }
+.note-figure--float figure { float: right; width: 45%; margin: 0 0 16px 24px; }
+.note-figure--float.note-figure--35 figure { width: 35%; }
+.note-figure--float.note-figure--55 figure { width: 55%; }
+@media(max-width:620px) {
+  .note-figure--columns { display: flex; flex-direction: column; gap: 12px; }
+  .note-figure--columns article { order: -1; }
+  .note-figure--float figure { float: none; width: 100% !important; margin: 0 0 16px; }
+}
