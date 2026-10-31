@@ -18,3 +18,9 @@
   .note-figure--columns article { order: -1; }
   .note-figure--float figure { float: none; width: 100% !important; margin: 0 0 16px; }
 }
+#published-note { color: var(--ink); margin-top: 32px; font-family: var(--sans); }
+#published-note img, #published-note video { max-width: 100%; height: auto; }
+#published-note video { width: 100%; }
+#published-note table tr { background: var(--paper); }
+#published-note table tr:nth-child(2n) { background: #28333e; }
+#published-note h1 { letter-spacing: normal; }

@@ -35,27 +35,23 @@ bundle exec jekyll serve
 
 GitHub Pages에 연결된 브랜치에 커밋하고 push하면 저장소의 Pages 설정에 따라 배포됩니다.
 
-## Browser writing workspace
+## Private browser writing workspace
 
-Open `/admin/` (or **Write** in the footer) to write Markdown with Vditor 4.0.1.
-Inline `$...$` and display `$$...$$` math use KaTeX. The toolbar supports tables,
-formatting, instant rendering, and source/preview modes. Raster images can be
-pasted, dropped, or selected, up to 8 MB each.
+Open `/login/` directly and sign in with the owner GitHub account. The public
+navigation has no Login link. Write is hidden until the server verifies the
+owner session. The private editor runs on Cloudflare Workers; every asset and
+publishing request requires its HttpOnly session. The server checks GitHub user
+ID 250346925, including before publishing. Other accounts are rejected.
 
-This is a local authoring prototype, **not a publishing CMS**. Drafts and embedded
-images are stored in IndexedDB for this browser and origin. No login, server upload,
-or GitHub publishing is configured. Download a JSON backup to restore a draft on
-another browser/device. Markdown ZIP export includes relative `images/` assets.
-Browser data removal also removes drafts. The editor dependencies are pinned on
-jsDelivr, so loading the editor requires internet access. Public note listing and
-OAuth-backed publication are a separate next step.
+Drafts and images stay in this browser until Publish is chosen. Use JSON backup
+and restore to move between devices. Older local drafts can be recovered at
+`/admin/`, which no longer serves the editor. Public notes appear under `/posts/`;
+old `/demos/` links still redirect. Direct MP4/WebM video URLs are supported.
 
-Image layouts: use **Add image layout** to choose Full width, Float right, or Two
-columns, with a caption and Markdown/TeX description. Existing layouts can be
-reopened via **Edit layout**. Layout blocks are stored as HTML within Markdown;
-use the included `note.html` and `note-layout.css` to view their exported layout.
-Mobile layouts stack vertically. Layout metadata also survives JSON backups.
-**Add video** embeds a direct HTTPS MP4/WebM URL; it does not upload local videos.
+The editor supports Markdown, inline/display TeX, tables, image drag-and-drop,
+and Full width / Float right / Two columns image layouts. Export includes HTML,
+Markdown, styles, and images. Publishing commits sanitized HTML and images to
+GitHub; Pages deployment takes additional time after the commit.
 
-Public notes and videos are listed at `/posts/`. The existing RL-YAI video is at
-`/posts/rl-yai/`; the old `/demos/` URLs redirect to the corresponding Posts pages.
+Worker source and deployment instructions are in `_studio/README.md`. Never
+put credentials in Jekyll configuration, browser code, or repository files.

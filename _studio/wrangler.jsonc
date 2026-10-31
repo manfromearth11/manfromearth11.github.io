@@ -1,0 +1,11 @@
+{
+ "name":"jaehun-studio",
+ "main":"worker.mjs",
+ "compatibility_date":"2026-10-31",
+ "compatibility_flags":["nodejs_compat"],
+ "workers_dev":true,
+ "triggers":{"crons":["0 3 * * *"]},
+ "assets":{"directory":"dist","binding":"ASSETS","run_worker_first":true},
+ "d1_databases":[{"binding":"DB","database_name":"jaehun-studio","database_id":"511ad60a-9065-424e-9074-c1d15e67f556"}],
+ "vars":{"SITE_ORIGIN":"https://manfromearth11.github.io","OWNER_ID":"250346925","REPOSITORY":"manfromearth11/manfromearth11.github.io"}
+}

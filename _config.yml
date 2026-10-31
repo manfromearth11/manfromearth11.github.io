@@ -116,3 +116,12 @@ category_archive:
 tag_archive:
   type: liquid
   path: /tags/
+
+# Private authoring server; set only after authenticated deployment.
+studio_origin: "https://jaehun-studio.manfromearth11.workers.dev"
+exclude:
+  - _studio
+
+collections:
+  notes:
+    output: true

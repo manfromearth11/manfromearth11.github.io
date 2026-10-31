@@ -8,6 +8,10 @@ permalink: /posts/
   <main id="main">
     <div class="section-kicker"><span class="accent-line"></span> Notes / Reviews / Videos</div>
     <h1>Posts</h1>
+    {% assign notes = site.notes | sort: 'title' %}
+    {% for note in notes %}
+    <article class="demo-list-entry"><h2><a href="{{ note.url | relative_url }}">{{ note.title | escape }}</a></h2><p>Study note</p></article>
+    {% endfor %}
     <article class="demo-list-entry">
       <h2><a href="{{ '/posts/rl-yai/' | relative_url }}">RL-YAI <span aria-hidden="true">↗</span></a></h2>
       <p>Video comparison · Seed 10003</p>

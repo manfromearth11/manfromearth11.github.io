@@ -1,0 +1,58 @@
+---
+layout: academic
+title: Write
+permalink: /admin/
+sitemap: false
+---
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@4.0.1/dist/index.css">
+<link rel="stylesheet" href="{{ '/assets/css/editor.css' | relative_url }}?v={{ site.time | date: '%s' }}">
+<link id="figure-styles" rel="stylesheet" href="{{ '/assets/css/note-layout.css' | relative_url }}">
+<main id="main" class="write-page">
+  <p class="section-kicker">WORKING NOTES / LOCAL DRAFTS</p>
+  <h1>WRITE.</h1>
+  <p class="write-description">A space for study notes, equations, and paper reviews.</p>
+  <p class="local-notice">Drafts and images are saved only in this browser. Publishing is not connected yet. Download a backup before switching devices or clearing browser data.</p>
+  <div class="write-actions">
+    <label>Draft <select id="drafts" disabled aria-label="Saved drafts"></select></label>
+    <button id="new-draft" disabled>New note</button>
+    <button id="backup" disabled>Download backup</button>
+    <button id="restore-button" disabled>Restore backup</button>
+    <input id="restore" type="file" accept="application/json,.json" hidden disabled>
+    <button id="export" disabled>Export Markdown + images</button>
+  </div>
+  <label class="title-label" for="note-title">Title</label>
+  <input id="note-title" placeholder="What I learned today" maxlength="200" disabled>
+  <details class="writing-help"><summary>Equations, tables & images</summary>
+    <p>Use <code>$Q(s,a)$</code>, for inline math and <code>$$</code> around TeX for display math. Full .tex document compilation is not supported.</p>
+    <p>Use the table toolbar button to insert a table and edit its cells. The editing mode menu offers instant rendering, Markdown split view, and rich text editing.</p>
+    <p>Drop or paste PNG, JPG, GIF, or WebP images into the editor (up to 8 MB each). ZIP exports include Markdown and images. Use a JSON backup to restore an editable draft.</p>
+  </details>
+  <div class="write-actions"><button id="figure-add" disabled>Add image layout</button><select id="figure-list" aria-label="Image layouts" disabled></select><button id="figure-edit" disabled>Edit layout</button></div>
+  <details class="writing-help"><summary>Add video</summary>
+    <p>Use a direct MP4 or WebM URL. Video files are not uploaded by this editor.</p>
+    <label for="video-url">Video URL</label><input id="video-url" type="url" placeholder="https://example.com/video.mp4">
+    <button id="video-insert" disabled>Insert video</button>
+    <button id="video-demo" disabled>Insert RL-YAI video</button>
+  </details>
+  <p id="save-status" role="status" aria-live="polite">Loading editor…</p>
+  <div id="note-editor"></div>
+<dialog id="figure-dialog" aria-labelledby="figure-heading">
+    <form id="figure-form">
+      <h2 id="figure-heading">Image layout</h2>
+      <p class="layout-hint">Add a figure with a description. Layouts stack vertically on small screens.</p>
+      <label>Layout<select id="figure-mode"><option value="full">Full width</option><option value="float">Float right</option><option value="columns">Two columns</option></select></label>
+      <label>Image width<select id="figure-width"><option value="35">35%</option><option value="45" selected>45%</option><option value="55">55%</option></select></label>
+      <button type="button" id="figure-choose">Choose image</button><input id="figure-file" type="file" accept="image/png,image/jpeg,image/gif,image/webp" hidden>
+      <div id="figure-drop" tabindex="0">Drop an image here or paste from the clipboard</div>
+      <label>Alternative text<input id="figure-alt" maxlength="300" placeholder="Describe the image"></label>
+      <label>Caption<input id="figure-caption" maxlength="500" placeholder="Figure 1. …"></label>
+      <label>Description (Markdown and TeX)<textarea id="figure-text" rows="5" placeholder="Explain the figure here…"></textarea></label>
+      <p id="figure-status" role="status"></p>
+      <p class="layout-hint">Preview</p><div id="figure-preview" class="vditor-reset"></div>
+      <div class="write-actions"><button type="submit">Save layout</button><button type="button" id="figure-cancel">Cancel</button></div>
+    </form>
+  </dialog>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/vditor@4.0.1/dist/index.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" defer></script>
+<script src="{{ '/assets/js/editor.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>

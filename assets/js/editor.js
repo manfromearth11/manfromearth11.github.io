@@ -162,6 +162,18 @@
     }
     $('video-insert').onclick=()=>insertVideo($('video-url').value);
     $('video-demo').onclick=()=>insertVideo('https://manfromearth11.github.io/assets/videos/rl-yai-seed10003.mp4');
+    if ($('publish-note')) $('publish-note').onclick = async () => {
+      if (!$('note-title').value.trim()) { status('Add a title before publishing.'); return; }
+      if (!confirm('Publish this note and its images publicly on your website and GitHub repository?')) return;
+      $('publish-note').disabled = true;
+      try {
+        await save(); status('Publishing…');
+        const result = await window.studioPublish({id: current.id, title: current.title, markdown: current.markdown});
+        status('Committed to GitHub. Your post will appear after deployment: ');
+        const link = document.createElement('a'); link.href=result.url; link.textContent='Open post'; link.target='_blank'; link.rel='noopener'; $('save-status').append(link);
+      } catch(e) {report(e);} finally {$('publish-note').disabled=false;}
+    };
+    if ($('signout')) $('signout').onclick = () => window.studioLogout().catch(report);
     $('note-title').addEventListener('input', changed);
     $('new-draft').onclick = async () => { try {await save(); load(makeDraft()); await save(); $('note-title').focus();} catch(e){report(e);} };
     $('drafts').onchange = async () => { const id = $('drafts').value; try {await save(); load(await transaction('readonly', s => s.get(id))); await refresh();} catch(e){report(e);} };

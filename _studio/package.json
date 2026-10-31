@@ -1,0 +1,1 @@
+{"private":true,"type":"module","scripts":{"build":"node build.mjs","test":"node --test","deploy":"npm run build && wrangler deploy"},"devDependencies":{"wrangler":"4.156.0"},"dependencies":{"sanitize-html":"2.18.1"}}

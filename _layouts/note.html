@@ -1,0 +1,12 @@
+---
+layout: academic
+---
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@4.0.1/dist/index.css">
+<link rel="stylesheet" href="{{ '/assets/css/note-layout.css' | relative_url }}">
+<main id="main" class="demo-page">
+  <p class="section-kicker"><a href="{{ '/posts/' | relative_url }}">Posts</a> / Study note</p>
+  <h1>{{ page.title | escape }}</h1>
+  <article id="published-note" class="vditor-reset">{{ content }}</article>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/vditor@4.0.1/dist/index.min.js" defer></script>
+<script src="{{ '/assets/js/note.js' | relative_url }}" defer></script>

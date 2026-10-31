@@ -1,0 +1,10 @@
+import {readFile,mkdir,writeFile,cp,rm} from 'node:fs/promises';
+await rm('dist',{recursive:true,force:true});await mkdir('dist/assets/js',{recursive:true});await mkdir('dist/assets/css',{recursive:true});
+let body=(await readFile('editor.html','utf8')).split(/^---\s*$/m).slice(2).join('---');
+body=body.replace(/{{\s*'([^']+)'\s*\|\s*relative_url\s*}}/g,'$1').replace(/\?v={{[^}]+}}/g,'');
+body=body.replace('Drafts and images are saved only in this browser. Publishing is not connected yet. Download a backup before switching devices or clearing browser data.','Drafts stay in this browser until you publish. Download a backup before switching devices or clearing browser data.');
+body=body.replace('<button id="export"', '<button id="publish-note" disabled>Publish</button><button id="signout" disabled>Sign out</button><button id="export"');
+body=body.replace('<script src="/assets/js/editor.js"', '<script src="/assets/js/studio-auth.js" defer></script><script src="/assets/js/editor.js"');
+await writeFile('dist/index.html',`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Write — Jaehun Shon</title><link rel="stylesheet" href="/assets/css/academic.css"><body><div class="site-shell"><a href="https://manfromearth11.github.io/">← Website</a>${body}</div></body></html>`);
+for(const name of ['academic','editor','note-layout'])await cp(`../assets/css/${name}.css`,`dist/assets/css/${name}.css`);
+await cp('../assets/js/editor.js','dist/assets/js/editor.js');await cp('studio-auth.js','dist/assets/js/studio-auth.js');

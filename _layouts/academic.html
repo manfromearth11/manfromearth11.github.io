@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% if page.title %}{{ page.title | escape }} — {{ site.data.profile.name | escape }}{% else %}{{ site.data.profile.name | escape }} — {{ site.data.profile.role | escape }}{% endif %}</title>
   <meta name="description" content="{{ page.description | default: site.description | strip_newlines | escape }}">
+  <meta name="studio-origin" content="{{ site.studio_origin | default: '' | escape }}">
   <meta name="theme-color" content="#202831">
   <meta property="og:title" content="{{ page.title | default: site.data.profile.name | escape }}">
   <meta property="og:description" content="{{ page.description | default: site.description | strip_newlines | escape }}">
@@ -33,9 +34,10 @@
     {{ content }}
     <footer class="site-footer">
       <span>© {{ 'now' | date: '%Y' }} {{ p.name | upcase | escape }}</span>
-      <a href="{{ "/admin/" | relative_url }}">Write</a>
+      <a data-owner-write hidden>Write</a>
       <a href="#top">Back to top <span aria-hidden="true">↑</span></a>
     </footer>
   </div>
+<script src="{{ '/assets/js/owner-auth.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
 </body>
 </html>
