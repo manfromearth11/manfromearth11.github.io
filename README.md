@@ -34,3 +34,18 @@ bundle exec jekyll serve
 브라우저에서 `http://localhost:4000`을 엽니다. `_config.yml`을 수정하면 서버를 재시작합니다.
 
 GitHub Pages에 연결된 브랜치에 커밋하고 push하면 저장소의 Pages 설정에 따라 배포됩니다.
+
+## Browser writing workspace
+
+Open `/admin/` (or **Write** in the footer) to write Markdown with Vditor 4.0.1.
+Inline `$...$` and display `$$...$$` math use KaTeX. The toolbar supports tables,
+formatting, instant rendering, and source/preview modes. Raster images can be
+pasted, dropped, or selected, up to 8 MB each.
+
+This is a local authoring prototype, **not a publishing CMS**. Drafts and embedded
+images are stored in IndexedDB for this browser and origin. No login, server upload,
+or GitHub publishing is configured. Download a JSON backup to restore a draft on
+another browser/device. Markdown ZIP export includes relative `images/` assets.
+Browser data removal also removes drafts. The editor dependencies are pinned on
+jsDelivr, so loading the editor requires internet access. Public note listing and
+OAuth-backed publication are a separate next step.

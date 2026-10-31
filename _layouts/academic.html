@@ -33,6 +33,7 @@
     {{ content }}
     <footer class="site-footer">
       <span>© {{ 'now' | date: '%Y' }} {{ p.name | upcase | escape }}</span>
+      <a href="{{ "/admin/" | relative_url }}">Write</a>
       <a href="#top">Back to top <span aria-hidden="true">↑</span></a>
     </footer>
   </div>

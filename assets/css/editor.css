@@ -1,0 +1,26 @@
+body:has(.write-page) .site-shell { max-width: 1440px; }
+.write-page { padding: 40px 0; }
+.write-description { color: var(--muted); margin-bottom: 20px; }
+.local-notice { border-left: 2px solid var(--accent); padding: 8px 16px; font-size: 13px; color: var(--muted); max-width: 850px; }
+.write-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 26px 0; font-size: 13px; }
+.write-page button,.write-page select,.file-button { border: 1px solid var(--line); background: #28333e; color: var(--ink); padding: 8px 12px; border-radius: 3px; font: inherit; cursor: pointer; }
+.write-page select { max-width: 240px; }
+.write-page button:disabled { opacity: .45; cursor: wait; }
+.file-button input { width: 160px; display: block; font-size: 11px; margin-top: 4px; }
+.title-label { font: 12px var(--mono); color: var(--muted); display: block; }
+#note-title { width: 100%; background: transparent; color: var(--ink); font: 500 26px var(--sans); padding: 12px 0; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; }
+.writing-help { margin-top: 20px; font-size: 13px; color: var(--muted); }
+.writing-help summary { cursor: pointer; }
+.writing-help p { margin-top: 10px; }
+#save-status { font-size: 12px; color: var(--accent); margin: 16px 0 10px; min-height: 20px; }
+#note-editor { min-height: 520px; --border-color: #424a52; --panel-background-color: #28333e; --toolbar-background-color: #28333e; --textarea-background-color: #202831; --textarea-text-color: #e8e6e0; }
+#note-editor .vditor-reset { font-family: var(--sans); }
+#note-editor .vditor-reset h1 { letter-spacing: normal; }
+#note-editor .vditor-toolbar { flex-wrap: wrap; padding-left: 8px !important; }
+#note-editor .vditor-reset img { max-width: 100%; }
+@media(max-width:620px) { .write-page { padding-top: 28px; } .write-actions { gap: 8px; } #note-editor .vditor-reset { padding: 14px !important; } }
+#note-editor .vditor-reset { color: var(--ink); caret-color: var(--ink); }
+#note-editor .vditor-ir, #note-editor .vditor-wysiwyg, #note-editor .vditor-sv, #note-editor .vditor-preview { background: var(--paper); color: var(--ink); }
+#note-editor .vditor-reset table tr { background: var(--paper); }
+#note-editor .vditor-reset table tr:nth-child(2n) { background: #28333e; }
+#note-editor .vditor-reset table th, #note-editor .vditor-reset table td { border-color: var(--line); }
