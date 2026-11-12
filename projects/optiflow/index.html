@@ -37,29 +37,20 @@ description: Learning Multimodal One-step Flow Policy via Value-weighted Optimal
     <h3 class="subsection-title">Value sets the mass; geometry sets the match</h3><div class="project-prose"><p>OT moves probability mass from one-step samples to reference candidates. Its row constraints fix how much mass each source sends, and its column constraints fix how much each candidate receives. Entropic regularization smooths the plan; Sinkhorn alternately rescales its rows and columns to satisfy these constraints.</p><p><strong>Value belongs in the reference-side marginal.</strong> With a fixed target marginal, adding a candidate-only value term to the transport cost cannot change the total mass assigned to that candidate. OptiFlow instead gives higher-value candidates more target mass, then uses action distance to find compatible pairings. This separates which actions to favor from how to match them.</p></div>
   </section>
   <section id="algorithm" class="project-section">
-    <p class="section-number">03 / ALGORITHM</p><h2>Three components, three learning objectives</h2>
-    <p class="project-prose">OptiFlow trains a critic, a multi-step reference policy, and a one-step policy. The reference policy proposes actions; value-weighted optimal transport turns those proposals into targets for the one-step policy.</p>
-    <h3 class="subsection-title">1. Critic learning</h3>
-    <p class="project-prose">Train the critic with the standard Bellman loss for the one-step policy:</p>
-    <div class="language-math">\mathcal L_Q(\phi)=\mathbb E\left[\left(Q_\phi(s,a)-\left[r+\gamma Q_{\bar\phi}(s',\mu_\theta(s',z'))\right]\right)^2\right]</div>
-    <p class="equation-note">Transitions come from the offline dataset; z′ is Gaussian noise. Q with parameters φ̄ is the target critic.</p>
-    <h3 class="subsection-title">2. Reference policy learning</h3>
-    <p class="project-prose">The reference policy is a multi-step flow with velocity field v<sub>ω</sub>. We train it with <strong>value-aware behavior cloning (VaBC)</strong>, a weighted flow-matching objective:</p>
-    <div class="language-math">\mathcal L_{\mathrm{ref}}(\omega)=\mathbb E_{\substack{(s,a)\sim\mathcal D,\;\epsilon,z\sim\mathcal N(0,I_d)\\t\sim\mathrm{Unif}([0,1])}}\left[g_\eta(s,a)\left\|v_\omega(s,a_t,t)-(a-\epsilon)\right\|_2^2\right]</div>
-    <div class="language-math">a_t=(1-t)\epsilon+ta,\qquad g_\eta(s,a)=\frac{\exp\!\left(\frac{\lambda}{\eta}Q_\phi(s,a)\right)}{\exp\!\left(\frac{\lambda}{\eta}Q_\phi(s,a)\right)+\exp\!\left(\frac{\lambda}{\eta}Q_\phi(s,\mu_\theta(s,z))\right)}</div>
-    <p class="project-prose">The regression targets are dataset actions. The weight gives greater priority to actions whose values exceed those of the current one-step policy. The temperature η controls this preference; λ normalizes the critic scale within the minibatch. We hold these weights fixed during the reference-policy update.</p>
-    <div class="language-math">\lambda=\left(\frac{1}{B}\sum_{b=1}^{B}|Q_\phi(s_b,a_b)|+\epsilon_q\right)^{-1}</div>
-    <aside class="variant-note"><h4>Ordinary BC gives OptiFlow-BC</h4><p>Set the reference-learning weight to one:</p><div class="language-math">g_\eta(s,a)\equiv1\quad\Longrightarrow\quad\mathcal L_{\mathrm{ref}}=\mathcal L_{\mathrm{BC}}</div><p>This is <strong>OptiFlow-BC</strong>: train the reference policy with standard flow matching, and keep value-weighted OT and one-step distillation unchanged. Full OptiFlow uses VaBC for reference policy learning.</p></aside>
-    <h3 class="subsection-title">3. One-step policy learning</h3>
-    <p class="project-prose">For each state, sample N one-step actions and M reference candidates. Assign uniform mass to the one-step samples and value-weighted mass to the reference candidates:</p>
-    <div class="language-math">p_i=\frac1N,\qquad q_j=\frac{\exp(Q_\phi(s,\tilde a_j)/\tau)}{\sum_k\exp(Q_\phi(s,\tilde a_k)/\tau)}</div>
-    <p class="project-prose">Use squared action distances, normalized per state, as the cost C. Sinkhorn solves the entropic transport problem:</p>
-    <div class="language-math">P^*=\underset{P\in\Pi(p,q)}{\arg\min}\;\langle P,C\rangle+\varepsilon\sum_{i,j}P_{ij}(\log P_{ij}-1)</div>
-    <p class="project-prose">Select each sample’s maximum-mass partner, then minimize the transport-weighted regression loss:</p>
-    <div class="language-math">j_i^*\in\arg\max_jP^*_{ij},\qquad\mathcal L_{\mathrm{distill}}(\theta)=\mathbb E\left[\sum_{i=1}^N P^*_{i,j_i^*}\left\|\mu_\theta(s,z_i)-\tilde a_{j_i^*}\right\|_2^2\right]</div>
-    <p class="project-prose">Reference actions, assignments, and transport weights are fixed during this update. Gradients flow only through the one-step policy, <strong>without direct critic maximization</strong>. At inference, only this policy runs.</p>
-    <p class="equation-note">The main configuration uses N = 16, M = 64, and 30 Sinkhorn iterations during training. See Section 4 and Appendix D of the paper for implementation details.</p>
-
+    <p class="section-number">03 / ALGORITHM</p><h2>Algorithm</h2>
+    <ul class="algorithm-summary">
+      <li>OptiFlow has three components: a critic Q<sub>φ</sub>, a reference flow policy μ<sub>ω</sub>, and a one-step policy μ<sub>θ</sub>.</li>
+      <li><strong>The critic</strong> is trained with the standard Bellman loss.</li>
+      <li><strong>The reference policy</strong> is trained with value-aware behavior cloning (VaBC):
+        <div class="language-math">\mathcal L_{\mathrm{ref}}(\omega)=\mathbb E\left[\underbrace{g_\eta(s,a)}_{\text{Value weight}}\underbrace{\left\|v_\omega(s,a_t,t)-(a-\epsilon)\right\|_2^2}_{\text{Flow-matching loss}}\right]</div>
+        Here, a is a dataset action, ε is Gaussian noise, and a<sub>t</sub> = (1 − t)ε + ta. The weight g<sub>η</sub> favors higher-value dataset actions. <strong>Setting g<sub>η</sub> = 1 gives standard BC and yields OptiFlow-BC.</strong>
+      </li>
+      <li><strong>The one-step policy</strong> learns from reference actions assigned by value-weighted optimal transport:
+        <div class="language-math">\mathcal L_{\mathrm{distill}}(\theta)=\mathbb E\left[\sum_i\underbrace{P^*_{i,j_i^*}}_{\text{Transport weight}}\underbrace{\left\|\mu_\theta(s,z_i)-\tilde a_{j_i^*}\right\|_2^2}_{\text{Distillation loss}}\right],\qquad j_i^*\in\arg\max_jP^*_{ij}</div>
+        P* is the value-weighted OT plan, and ã is a reference action. The plan and targets are fixed during the update; there is <strong>no direct critic maximization</strong>. This distillation is the same in OptiFlow and OptiFlow-BC.
+      </li>
+      <li><strong>The output is the one-step policy:</strong> a single forward pass at inference.</li>
+    </ul>
   </section>
   <section id="experiments" class="project-section"><p class="section-number">04 / CONTROLLED EXPERIMENTS</p><h2>Does the policy keep multiple good modes?</h2>
     <h3 class="subsection-title">Two-mode bandit</h3><p class="project-prose">Two high-value modes are separated by a suboptimal region. Strong distillation can pull samples toward that region; weak distillation can let critic maximization push them outside behavior support. OptiFlow captures both high-value modes in this diagnostic.</p>

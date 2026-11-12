@@ -25,3 +25,5 @@ body:has(.project-page) .site-shell{max-width:1180px}
 .bandit-grid figcaption{font:16px/1.5 var(--sans);padding:12px 2px 0}.bandit-grid figcaption strong{display:block;font-weight:600}.bandit-grid figcaption span{display:block;font-size:15px;color:var(--muted);margin-top:6px}.variant-note{border-left:3px solid var(--accent);padding:4px 24px;margin:24px 0;max-width:790px}.variant-note h4{font-size:20px;margin:0 0 12px}.variant-note p{font-size:16px;line-height:1.8;margin:12px 0}.method-qualification{font-size:14px;color:var(--muted)}
 
 .equation-note{font-size:14px;color:var(--muted);max-width:790px;line-height:1.7}.project-nav{flex-wrap:wrap}#algorithm .language-math{margin:18px 0;padding:16px 8px;font-size:16px}#algorithm .variant-note .language-math{padding-left:0}
+
+.algorithm-summary{padding-left:24px;font-size:17px;line-height:1.8}.algorithm-summary li{margin:12px 0}.algorithm-summary .language-math{font-size:16px}@media(max-width:700px){.algorithm-summary{font-size:16px;padding-left:20px}}
