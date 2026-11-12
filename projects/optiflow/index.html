@@ -32,28 +32,10 @@ description: Learning Multimodal One-step Flow Policy via Value-weighted Optimal
     <p class="section-number">03 / ALGORITHM</p><h2>Algorithm</h2>
     <details class="algorithm-toggle">
       <summary>Click to see the full algorithm</summary>
-      <div class="pseudocode" role="region" aria-label="OptiFlow training pseudocode" tabindex="0">
-        <p class="pseudocode-title"><strong>Algorithm 1</strong> OptiFlow training</p>
-        <ol>
-          <li><strong>for</strong> each training iteration <strong>do</strong></li>
-          <li class="indent-one">Sample a minibatch B = {(s, a, r, s′)} from D</li>
-          <li class="indent-one">Update critic Q<sub>φ</sub> using ∇<sub>φ</sub> L<sub>Q</sub></li>
-          <li class="indent-one">Update reference policy μ<sub>ω</sub> using ∇<sub>ω</sub> L<sub>ref</sub></li>
-          <li class="indent-one"><strong>for</strong> each state s in B <strong>do</strong></li>
-          <li class="indent-two">Sample N one-step actions a<sub>i</sub> = μ<sub>θ</sub>(s, z<sub>i</sub>)</li>
-          <li class="indent-two">Sample M reference actions ã<sub>j</sub> = μ<sub>ω</sub>(s, z̃<sub>j</sub>)</li>
-          <li class="indent-two">Set p<sub>i</sub> = 1/N and q<sub>j</sub> = softmax<sub>j</sub>(Q<sub>φ</sub>(s, ã<sub>j</sub>)/τ)</li>
-          <li class="indent-two">Construct C<sub>ij</sub> from squared action distances, normalized per state</li>
-          <li class="indent-two">Compute P* = Sinkhorn(C, p, q, ε, T)</li>
-          <li class="indent-two">Select j*<sub>i</sub> = argmax<sub>j</sub> P*<sub>ij</sub></li>
-          <li class="indent-one"><strong>end for</strong></li>
-          <li class="indent-one">Update one-step policy μ<sub>θ</sub> using ∇<sub>θ</sub> L<sub>distill</sub></li>
-          <li class="indent-one">Update target critic Q<sub>φ̄</sub></li>
-          <li><strong>end for</strong></li>
-        </ol>
-        <p class="pseudocode-output"><strong>Output:</strong> one-step policy μ<sub>θ</sub></p>
-      </div>
-      <p class="figure-note">Algorithm 1 of the paper. Reference targets and transport assignments are held fixed during distillation.</p>
+      <figure class="algorithm-original">
+        <a class="zoom-figure" href="{{ '/assets/projects/optiflow/algorithm.png' | relative_url }}"><img src="{{ '/assets/projects/optiflow/algorithm.png' | relative_url }}" width="1212" height="537" loading="lazy" alt="Algorithm 1: OptiFlow training, reproduced directly from page 6 of the paper PDF."></a>
+        <figcaption><a href="https://arxiv.org/pdf/2609.15883v2#page=6">Algorithm 1 · paper, page 6 ↗</a></figcaption>
+      </figure>
     </details>
     <ul class="algorithm-summary">
       <li>OptiFlow has three components: a critic Q<sub>φ</sub>, a reference flow policy μ<sub>ω</sub>, and a one-step policy μ<sub>θ</sub>.</li>
