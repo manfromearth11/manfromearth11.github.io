@@ -35,7 +35,7 @@
           <h3>{% if paper.paper %}<a href="{{ paper.paper | escape }}">{{ paper.title | escape }}</a>{% else %}{{ paper.title | escape }}{% endif %}</h3>
           <p class="authors">{{ paper.authors | escape | replace: p.name, '<strong>Jaehun Shon</strong>' }}</p>
           {% if paper.description %}<p class="abstract">{{ paper.description | escape }}</p>{% endif %}
-          <div class="paper-links">{% if paper.paper %}<a href="{{ paper.paper | escape }}">Paper ↗</a>{% endif %}{% if paper.code %}<a href="{{ paper.code | escape }}">Code ↗</a>{% endif %}</div>
+          <div class="paper-links">{% if paper.project %}<a href="{{ paper.project | relative_url }}">Project ↗</a>{% endif %}{% if paper.paper %}<a href="{{ paper.paper | escape }}">Paper ↗</a>{% endif %}{% if paper.code %}<a href="{{ paper.code | escape }}">Code ↗</a>{% endif %}</div>
         </div>
       </article>
       {% endfor %}
