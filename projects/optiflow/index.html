@@ -61,7 +61,7 @@ description: Learning Multimodal One-step Flow Policy via Value-weighted Optimal
       <li><strong>The critic</strong> is trained with the standard TD loss.</li>
       <li><strong>The reference policy</strong> is trained with value-aware behavior cloning (VaBC):
         <div class="language-math">\mathcal L_{\mathrm{ref}}(\omega)=\mathbb E\left[\underbrace{g_\eta(s,a)}_{\text{Value weight}}\underbrace{\left\|v_\omega(s,a_t,t)-(a-\epsilon)\right\|_2^2}_{\text{Flow-matching loss}}\right]</div>
-        Here, <span class="math-inline">a</span> is a dataset action, <span class="math-inline">\epsilon</span> is Gaussian noise, and <span class="math-inline">a_t = (1-t)\epsilon + ta</span>. The weight <span class="math-inline">g_\eta</span> favors higher-value dataset actions.
+        Here, <span class="math-inline">a</span> is a dataset action, <span class="math-inline">\epsilon</span> is Gaussian noise, and <span class="math-inline">a_t = (1-t)\epsilon + ta</span>. The weight <span class="math-inline">g_\eta</span> favors higher-value dataset actions, following <a href="https://simple-robotics.github.io/publications/guided-flow-policy/">Guided Flow Policy (GFP)</a>.
       </li>
       <li><strong>The one-step policy</strong> learns from reference actions assigned by value-weighted optimal transport:
         <details class="ot-details">
@@ -104,16 +104,65 @@ description: Learning Multimodal One-step Flow Policy via Value-weighted Optimal
 <figure><a class="zoom-figure" href="/assets/projects/optiflow/06_OptiFlow_BC.png"><img src="/assets/projects/optiflow/06_OptiFlow_BC.png" loading="lazy" alt="Four-mode environment: OptiFlow"></a><figcaption><strong>OptiFlow</strong><span class="goal-note">All four goals,<br>highest return</span></figcaption></figure>
     </div>
   </section>
-  <section id="results" class="project-section"><p class="section-number">06 / OFFLINE RL BENCHMARKS</p><h2>Performance across navigation and manipulation</h2><p class="project-prose">OptiFlow improves the aggregate OGBench and D4RL AntMaze scores over FQL and GFP. On D4RL Adroit, GFP scores higher. The comparison below is an excerpt from the full benchmark table.</p>
-    <div class="result-table" tabindex="0" role="region" aria-label="Benchmark results, scroll horizontally on small screens"><table><caption>Aggregate results · paper Table 1</caption><thead><tr><th scope="col">Benchmark</th><th scope="col">FQL</th><th scope="col">GFP</th><th scope="col">OptiFlow</th></tr></thead><tbody>
-      <tr><th scope="row">OGBench · state</th><td>39.0 ± 0.4</td><td>45.6 ± 0.4</td><td><strong>48.3 ± 0.4</strong></td></tr>
-      <tr><th scope="row">OGBench · visual</th><td>65.4 ± 1.8</td><td>57.7 ± 1.0</td><td><strong>75.9 ± 1.3</strong></td></tr>
-      <tr><th scope="row">D4RL · AntMaze</th><td>82.3 ± 1.3</td><td>82.6 ± 1.5</td><td><strong>86.6 ± 0.7</strong></td></tr>
-      <tr><th scope="row">D4RL · Adroit</th><td>50.7 ± 0.5</td><td><strong>52.1 ± 0.5</strong></td><td>50.5 ± 0.4</td></tr>
-    </tbody></table></div>
-    <p class="figure-note">Mean ± standard error. OGBench and AntMaze: success rate (%); Adroit: normalized return. Bold marks the highest mean among these three methods. State-based and D4RL results use 8 seeds; visual OptiFlow results use 4 seeds and average checkpoints at 300K, 400K, and 500K steps. Visual FQL results are reported from prior work in the paper.</p>
-    <h3 class="subsection-title">What does transport contribute?</h3><p class="project-prose">On the same 10-task OGBench ablation suite, FQL and OptiFlow-BC use the same standard BC reference setup. Changing the distillation mechanism raises average one-step success from <strong>37.6% to 48.6%</strong>. Adding the value-aware reference in full OptiFlow raises it further to <strong>57.3%</strong>. Better target allocation and better candidate proposals contribute separately.</p><p class="figure-note">Controlled ablation, Appendix Table 15; these 10-task averages are distinct from the aggregate benchmarks above.</p>
-    <p class="project-prose"><a href="https://arxiv.org/html/2609.15883v2#S5.T1">Full benchmark comparison ↗</a></p>
+  <section id="results" class="project-section"><p class="section-number">06 / OFFLINE RL BENCHMARKS</p>
+    <h2>Tasks</h2>
+    <div class="tasks-scroll"><div class="task-grid combined-tasks">
+      <h3 class="task-group ogbench-group"><a href="https://seohong.me/projects/ogbench/">OGBench</a></h3>
+      <h3 class="task-group d4rl-group"><a href="https://github.com/Farama-Foundation/D4RL">D4RL</a></h3>
+      <figure><video autoplay loop muted playsinline preload="none" aria-label="AntMaze"><source src="https://seohong.me/projects/ogbench/assets/videos/antmaze-large-navigate-v0_data.mp4" type="video/mp4"></video><figcaption>AntMaze</figcaption></figure>
+      <figure><video autoplay loop muted playsinline preload="none" aria-label="HumanoidMaze"><source src="https://seohong.me/projects/ogbench/assets/videos/humanoidmaze-medium-navigate-v0_data.mp4" type="video/mp4"></video><figcaption>HumanoidMaze</figcaption></figure>
+      <figure><video autoplay loop muted playsinline preload="none" aria-label="Cube"><source src="https://seohong.me/projects/ogbench/assets/videos/cube-quadruple-v0_task4.mp4" type="video/mp4"></video><figcaption>Cube</figcaption></figure>
+      <figure><video autoplay loop muted playsinline preload="none" aria-label="Scene"><source src="https://seohong.me/projects/ogbench/assets/videos/scene-v0_task4.mp4" type="video/mp4"></video><figcaption>Scene</figcaption></figure>
+      <figure><video autoplay loop muted playsinline preload="none" aria-label="AntMaze"><source src="https://seohong.me/projects/hiql/img/amz.mp4" type="video/mp4"></video><figcaption>AntMaze</figcaption></figure>
+      <figure><img src="https://robotics.farama.org/_images/adroit_pen.gif" loading="lazy" alt="Adroit hand manipulating a pen"><figcaption>Adroit · Pen</figcaption></figure>
+    </div></div>
+    <ul class="benchmark-setup project-prose">
+      <li>We use <a href="https://seohong.me/projects/ogbench/">OGBench</a> as our main benchmark, evaluating reward-based single-task environments across robotic locomotion and manipulation with both state and pixel observations.</li>
+      <li>We also evaluate on 6 AntMaze and 12 Adroit tasks from <a href="https://github.com/Farama-Foundation/D4RL">D4RL</a>, covering sparse-reward navigation and dexterous manipulation.</li>
+    </ul>
+    <h2>Results</h2>
+    <div class="result-table" tabindex="0" role="region" aria-label="Benchmark results, scroll horizontally on small screens"><table><thead><tr><th scope="col">Benchmark</th><th scope="col">IQL</th><th scope="col">ReBRAC</th><th scope="col">IFQL</th><th scope="col">FQL</th><th scope="col">GFP</th><th scope="col">OptiFlow</th></tr></thead><tbody>
+<tr><th scope="row">OGBench · state</th><td>16.5 ± 0.4</td><td>28.8 ± 0.5</td><td>28.6 ± 0.6</td><td>39.0 ± 0.4</td><td>45.6 ± 0.4</td><td><strong>48.3 ± 0.4</strong></td></tr>
+<tr><th scope="row">OGBench · visual</th><td>41.4 ± 3.0</td><td>59.8 ± 1.1</td><td>50.2 ± 2.0</td><td>65.4 ± 1.8</td><td>57.7 ± 1.0</td><td><strong>75.9 ± 1.3</strong></td></tr>
+<tr><th scope="row">D4RL · AntMaze</th><td>58.4</td><td>76.9</td><td>61.0 ± 2.5</td><td>82.3 ± 1.3</td><td>82.6 ± 1.5</td><td><strong>86.6 ± 0.7</strong></td></tr>
+<tr><th scope="row">D4RL · Adroit</th><td>53.5</td><td><strong>58.6</strong></td><td>48.2 ± 0.5</td><td>50.7 ± 0.5</td><td>52.1 ± 0.5</td><td>50.5 ± 0.4</td></tr>
+</tbody></table></div>
+    <details class="full-results-toggle">
+      <summary>Full results</summary>
+      <h3>OGBench · 1/2</h3><figure class="project-figure"><a class="zoom-figure" href="{{ '/assets/projects/optiflow/results-ogbench-1.png' | relative_url }}"><img src="{{ '/assets/projects/optiflow/results-ogbench-1.png' | relative_url }}" width="1120" height="1415" loading="lazy" alt="Appendix E: OGBench · 1/2 per-task results, captured from the paper."></a></figure>
+      <h3>OGBench · 2/2</h3><figure class="project-figure"><a class="zoom-figure" href="{{ '/assets/projects/optiflow/results-ogbench-2.png' | relative_url }}"><img src="{{ '/assets/projects/optiflow/results-ogbench-2.png' | relative_url }}" width="1120" height="745" loading="lazy" alt="Appendix E: OGBench · 2/2 per-task results, captured from the paper."></a></figure>
+      <h3>D4RL</h3><figure class="project-figure"><a class="zoom-figure" href="{{ '/assets/projects/optiflow/results-d4rl.png' | relative_url }}"><img src="{{ '/assets/projects/optiflow/results-d4rl.png' | relative_url }}" width="1120" height="500" loading="lazy" alt="Appendix E: D4RL per-task results, captured from the paper."></a></figure>
+    </details>
+    <details class="research-question"><summary>What does transport contribute?</summary><div class="question-content">
+    <p class="project-prose">Do the gains come from a better reference policy, or from how we distill it? We compare reference and one-step policy success rates on the same 10 OGBench tasks. OptiFlow-BC sets <span class="math-inline">g_\eta=1</span> to train a standard BC reference, while keeping the same value-weighted OT distillation as OptiFlow.</p>
+    <div class="result-table ablation-table" tabindex="0" role="region" aria-label="Reference and one-step policy success rates on 10 OGBench tasks"><table>
+      <thead><tr><th scope="col">Method</th><th scope="col">Reference training</th><th scope="col">Reference success (%)</th><th scope="col">One-step success (%)</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">FQL</th><td>BC</td><td>1.7 ± 0.3</td><td>37.6 ± 1.1</td></tr>
+        <tr><th scope="row">OptiFlow-BC</th><td>BC</td><td>1.5 ± 0.2</td><td>48.6 ± 1.3</td></tr>
+        <tr><th scope="row">GFP</th><td>VaBC</td><td>28.4 ± 3.4</td><td>52.5 ± 0.9</td></tr>
+        <tr><th scope="row">OptiFlow</th><td>VaBC</td><td>19.8 ± 2.8</td><td><strong>57.3 ± 1.0</strong></td></tr>
+      </tbody>
+    </table></div>
+    <ul class="benchmark-setup project-prose">
+      <li><strong>Better distillation.</strong> With the same BC reference setup, OptiFlow-BC raises one-step success from 37.6% to 48.6%.</li>
+      <li><strong>Better proposals.</strong> Adding VaBC raises it further to 57.3%. OptiFlow also outperforms GFP after distillation despite a lower reference success rate, showing that reference quality alone does not explain the gain.</li>
+    </ul>
+</div></details>
+    <details class="research-question"><summary>Where should the value go in optimal transport?</summary><div class="question-content">
+      <p>We compare putting value in the transport cost with putting it in the reference marginal, using two equal-value modes.</p>
+<div class="question-figures"><figure><img src="{{ '/assets/projects/optiflow/value-bimodal.png' | relative_url }}" loading="lazy" alt="Bimodal Q"><figcaption>Bimodal Q</figcaption></figure><figure><img src="{{ '/assets/projects/optiflow/value-cost.png' | relative_url }}" loading="lazy" alt="Value in cost"><figcaption>Value in cost</figcaption></figure><figure><img src="{{ '/assets/projects/optiflow/value-marginal.png' | relative_url }}" loading="lazy" alt="OptiFlow"><figcaption>OptiFlow</figcaption></figure></div><ul class="benchmark-setup">
+      <li><strong>Value in the cost.</strong> A uniform reference marginal still requires low-value actions to receive equal total mass.</li>
+      <li><strong>Value in the marginal.</strong> High-value reference actions receive more mass, while the cost depends only on action distance.</li>
+      <li>On the 10-task OGBench ablation, replacing the value-weighted marginal with a uniform one reduces average success from <strong>57.3% to 9.7%</strong>.</li>
+    </ul></div></details>
+    <details class="research-question"><summary>Why use optimal transport for multimodality?</summary><div class="question-content">
+      <p>Consider two equally valuable reference modes, with all one-step samples initialized on the left.</p>
+<div class="question-figures"><figure><img src="{{ '/assets/projects/optiflow/matching-init.png' | relative_url }}" loading="lazy" alt="Initialization · all on the left"><figcaption>Initialization · all on the left</figcaption></figure><figure><img src="{{ '/assets/projects/optiflow/matching-vdwm.png' | relative_url }}" loading="lazy" alt="VDWM · collapses left"><figcaption>VDWM · collapses left</figcaption></figure><figure><img src="{{ '/assets/projects/optiflow/matching-ot.png' | relative_url }}" loading="lazy" alt="OptiFlow · both modes"><figcaption>OptiFlow · both modes</figcaption></figure></div><ul class="benchmark-setup">
+      <li><strong>Independent matching.</strong> Value-distance weighted matching (VDWM) assigns each sample separately, so every sample selects the nearer left mode.</li>
+      <li><strong>OT marginal constraints.</strong> The coupling allocates mass across both equal-value modes, even when all samples start on one side.</li>
+    </ul></div></details>
+
   </section>
   <section id="citation" class="project-section"><div class="citation-heading"><div><p class="section-number">07 / CITATION</p><h2>BibTeX</h2></div><button id="copy-citation" type="button">Copy BibTeX</button></div><pre><code id="bibtex">@misc{shon2026optiflow,
   title={Learning Multimodal One-step Flow Policy

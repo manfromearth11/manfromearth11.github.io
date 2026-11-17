@@ -60,3 +60,17 @@ body:has(.project-page) .masthead{display:none}
 .goals-grid figcaption{font:16px/1.5 var(--sans);padding:12px 2px 0}
 .goals-grid figcaption strong{display:block;font-weight:600}
 @media(max-width:700px){.goals-grid{grid-template-columns:repeat(5,150px);overflow-x:auto;padding-bottom:14px}}
+
+.task-grid{display:grid;gap:18px;margin:20px 0 30px}.ogbench-tasks{grid-template-columns:repeat(3,minmax(0,1fr))}.d4rl-tasks{grid-template-columns:repeat(2,minmax(0,1fr));max-width:750px}.task-grid figure{margin:0;min-width:0}.task-grid video,.task-grid img{display:block;width:100%;aspect-ratio:1;object-fit:contain;background:#f6f8fa}.task-grid figcaption{text-align:center;font:16px/1.5 var(--sans);margin-top:10px}.task-credit{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:36px}@media(max-width:700px){.ogbench-tasks{grid-template-columns:repeat(2,minmax(0,1fr))}.task-grid{gap:12px}}
+
+.tasks-scroll{overflow-x:auto}.combined-tasks{grid-template-columns:repeat(6,minmax(0,1fr));gap:16px;min-width:840px}.task-group{font:500 20px/1.4 var(--sans);margin:0 0 4px;padding-bottom:10px;border-bottom:1px solid var(--line)}.ogbench-group{grid-column:1 / 5}.d4rl-group{grid-column:5 / 7}.combined-tasks figcaption{font-size:15px}
+
+.full-results-toggle{margin:22px 0 32px}.full-results-toggle summary{cursor:pointer;color:var(--accent);font-size:17px}.full-results-toggle .project-figure{margin:18px 0}.full-results-toggle img{padding:0}
+
+.benchmark-setup{padding-left:22px;margin:24px 0 32px}.benchmark-setup li{margin:12px 0}
+
+.result-table table{min-width:850px}.result-table th,.result-table td{padding:16px 12px}
+
+.ablation-table table{min-width:680px}
+
+.research-question{border-top:1px solid var(--line);padding:20px 0}.research-question>summary{cursor:pointer;font:500 20px/1.5 var(--sans);color:var(--ink)}.question-content{font-size:17px;line-height:1.8;padding-top:16px}.question-figures{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;max-width:720px;margin:24px 0}.question-figures figure{margin:0}.question-figures img{width:100%;display:block}.question-figures figcaption{text-align:center;font-size:15px;margin-top:8px}.question-content .benchmark-setup{max-width:850px}
