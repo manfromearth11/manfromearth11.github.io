@@ -8,7 +8,7 @@
 @media(max-width:800px){.heading:has([data-tex]){font-size:14px}}
 </style></head>
 <body><main><header><h1>OptiFlow</h1><span>From reference actions to transport-guided supervision</span></header>
-<div class="viewport"><div class="diagram"><canvas id="scene" width="2400" height="760" aria-label="Reference and one-step distributions produce samples, reference masses are weighted by Q, Sinkhorn couples the sample sets, and the selected assignments supervise distillation."></canvas>
+<div class="viewport"><div class="diagram"><canvas id="scene" width="2400" height="760" aria-label="Reference and one-step distributions produce samples, reference masses are weighted by Q, Sinkhorn couples the sample sets, and pink samples move to their assigned high-value reference actions during distillation. The value axis points upward from low Q to high Q."></canvas>
 <div class="label heading blue" style="left:13.333333%;top:27.631579%;width:30%;transform:translate(-50%,calc(-100% - 16px))">Reference flow policy <span data-tex="\mu_\omega(s,z)"></span></div>
 <div class="label heading" style="left:50%;top:27.631579%;width:30%;transform:translate(-50%,calc(-100% - 16px))">Value-weighted<br>Optimal Transport</div>
 <div class="label heading pink" style="left:86.666667%;top:27.631579%;width:26%;transform:translate(-50%,calc(-100% - 16px))">One-step policy <span data-tex="\mu_\theta(s,z)"></span></div>
@@ -100,11 +100,27 @@ for(let n=0;n<500;n++){u=u.map((_,i)=>(1/16)/K[i].reduce((s,k,j)=>s+k*v[j],0));v
 const P=K.map((row,i)=>row.map((k,j)=>k*u[i]*v[j])),targets=P.map(row=>row.indexOf(Math.max(...row))),maxMass=Math.max(...P.flat());
 const residual=Math.max(...P.map(row=>Math.abs(row.reduce((a,b)=>a+b)-1/16)),...q.map((mass,j)=>Math.abs(P.reduce((s,row)=>s+row[j],0)-mass)));
 if(residual>1e-6)console.error('Transport marginal residual',residual);
+// The displayed samples follow the same selected OT assignments used above.
+function transportedSource(i,progress){
+ const source=sources[i],target=refs[targets[i]];
+ return {x:mix(source.x,target.x,progress),y:mix(source.y,target.y,progress)};
+}
+function valueAxis(){
+ // Keep the value cue beside the weighted samples in the OT panel.
+ const x=panels.ot[0]+size-18,top=panels.ot[1];
+ line(x,top+46,x,top+181,gray,.8,1.5);
+ arrow(x,top+69,x,top+46,ink,1);
+ ctx.save();ctx.fillStyle=ink;ctx.font='14px Arial';ctx.textAlign='right';
+ ctx.fillText('High Q',panels.ot[0]+size-7,top+25);
+ ctx.fillStyle=gray;ctx.fillText('Low Q',panels.ot[0]+size-7,top+204);
+ ctx.restore();
+}
 let time=0,last=0,lastDraw=0;
 function draw(){ctx.clearRect(0,0,1200,380);const f=ease(time/2800),s=ease((time-3000)/2300),w=ease((time-5700)/600),o=ease((time-6400)/700),hard=ease((time-7200)/400),d=ease((time-8000)/800);const phase=time<3000?0:time<6000?1:time<9000?2:time<13500?3:4;
 frame(panels.ref);frame(panels.ot);frame(panels.out);
 densityContours(panels.ref,f,0,blue,false,1,[.12,.30,.55,.82]);
 evolvingPolicy(panels.out,d);
+valueAxis();
 const sampleVisibility=ease((time-2400)/400);
 arrow(290,arrowY,470,arrowY,blue,sampleVisibility);
 document.querySelector('#sample-label').style.opacity=sampleVisibility;
@@ -114,11 +130,11 @@ document.querySelector('#policy-sample-label').style.opacity=policySampleVisibil
 const distillVisibility=ease((time-7800)/200);
 arrow(730,arrowY,910,arrowY,pink,distillVisibility);
 document.querySelector('#distill-label').style.opacity=distillVisibility;
-if(o>0){P.forEach((row,i)=>row.forEach((mass,j)=>{const strength=mass/maxMass;if(strength<.012)return;const a=at(panels.ot,sources[i]),b=at(panels.ot,refs[j]);line(...a,mix(a[0],b[0],o),mix(a[1],b[1],o),'#7189ae',(.08+.35*strength)*o, .4+3*strength)}));
-if(hard>0)sources.forEach((a,i)=>{line(...at(panels.ot,a),...at(panels.ot,refs[targets[i]]),'#8a4e9d',hard*.8,1+3*P[i][targets[i]]/maxMass)});
+if(o>0){P.forEach((row,i)=>row.forEach((mass,j)=>{const strength=mass/maxMass;if(strength<.012)return;const a=at(panels.ot,transportedSource(i,d)),b=at(panels.ot,refs[j]);line(...a,mix(a[0],b[0],o),mix(a[1],b[1],o),'#7189ae',(.08+.35*strength)*o*(1-d), .4+3*strength)}));
+if(hard>0)sources.forEach((a,i)=>{line(...at(panels.ot,transportedSource(i,d)),...at(panels.ot,refs[targets[i]]),'#8a4e9d',hard*.8*(1-d),1+3*P[i][targets[i]]/maxMass)});
 }
 // Staggered, curved emission: each sample has a stable departure time and flight path.
-function scatter(a,i,origin,color,radius,salt){
+function scatter(a,i,origin,color,radius,salt,transportProgress=0){
  const hash=k=>{const v=Math.sin((i+1)*127.1+(salt+k)*311.7)*43758.5453;return v-Math.floor(v)};
  const delay=hash(1)*1050,flight=1150+hash(2)*300;
  const elapsed=time-3000-delay;
@@ -131,13 +147,13 @@ function scatter(a,i,origin,color,radius,salt){
  const c2=[end[0]-direction*(100+hash(5)*50),end[1]-bend*.65];
  const travel=t*t*(3-2*t);
  function position(u){const v=1-u;return[v*v*v*start[0]+3*v*v*u*c1[0]+3*v*u*u*c2[0]+u*u*u*end[0],v*v*v*start[1]+3*v*v*u*c1[1]+3*v*u*u*c2[1]+u*u*u*end[1]]}
- const current=position(travel);
+ const current=transportProgress>0?at(panels.ot,transportedSource(i,transportProgress)):position(travel);
  if(t>0&&t<1){for(let k=3;k>0;k--){const p=position(Math.max(0,travel-k*.025)),next=position(Math.max(0,travel-(k-1)*.025));line(...p,...next,color,.045+(3-k)*.035,1.3)}}
  dot(current,radius*(.6+.4*birth),color,.92*birth);
 }
 if(time>=3000){
  refs.forEach((a,j)=>scatter(a,j,panels.ref,blue,Math.sqrt(mix(1/32,q[j],w)*32)*4.4,1));
- sources.forEach((a,i)=>scatter(a,i,panels.out,pink,4.4,8));
+ sources.forEach((a,i)=>scatter(a,i,panels.out,pink,4.4,8,d));
 }
 
 }
