@@ -35,7 +35,7 @@ body:has(.project-page) .site-shell{max-width:1180px}
 
 .section-number{font:500 22px/1.4 var(--sans);letter-spacing:.3px;margin:0 0 20px}@media(max-width:700px){.section-number{font-size:20px}}
 
-.transport-animation{width:100%;overflow-x:auto}.transport-animation iframe{display:block;width:100%;min-width:680px;aspect-ratio:1200/740;border:0;background:#fff}
+.transport-animation{width:100%;overflow-x:auto}.transport-animation iframe{display:block;width:100%;min-width:680px;aspect-ratio:1200/380;border:0;background:#fff}
 
 body:has(.project-page) .masthead{display:none}
 

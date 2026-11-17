@@ -25,6 +25,13 @@ function draw(){
  ctx.translate(8,8);ctx.scale(864/400,864/400);
  ctx.fillStyle='#f8ebf2';ctx.fillRect(0,0,400,400);
  frame.forEach((path,i)=>{ctx.fillStyle=data.colors[i];ctx.fill(path);ctx.strokeStyle='#242124';ctx.lineWidth=1.4;ctx.stroke(path)});
+ if(data.centerCircle){
+  const phase=clamp((progress-.5)/.5),growth=phase*phase*(3-2*phase);
+  const [x,y,radius]=data.centerCircle;
+  ctx.globalAlpha=clamp(growth*8);ctx.beginPath();ctx.arc(x,y,radius*growth,0,Math.PI*2);
+  ctx.fillStyle=data.centerCircleFill;ctx.fill();
+  ctx.strokeStyle='#242124';ctx.lineWidth=1.4*Math.min(1,growth*3);ctx.stroke();ctx.globalAlpha=1;
+ }
  ctx.strokeStyle='#000';ctx.lineWidth=2.5;ctx.strokeRect(0,0,400,400);
  timeline.value=time;
 }
@@ -32,5 +39,5 @@ function tick(now){if(last&&playing)time=(time+Math.min(now-last,100))%duration;
 play.onclick=()=>{playing=!playing;play.textContent=playing?'Pause':'Play'};
 document.querySelector('#replay').onclick=()=>{time=0;playing=true;play.textContent='Pause';draw()};
 timeline.oninput=()=>{time=Number(timeline.value);playing=false;play.textContent='Play';draw()};
-fetch('one-step-motion.json').then(r=>{if(!r.ok)throw Error(r.status);return r.json()}).then(result=>{data={...result,frames:result.frames.map(frame=>frame.map(path=>new Path2D(path)))};requestAnimationFrame(tick)}).catch(()=>{document.querySelector('#error').hidden=false});
+fetch('one-step-motion.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error(r.status);return r.json()}).then(result=>{data={...result,frames:result.frames.map(frame=>frame.map(path=>new Path2D(path)))};requestAnimationFrame(tick)}).catch(()=>{document.querySelector('#error').hidden=false});
 </script></body></html>
