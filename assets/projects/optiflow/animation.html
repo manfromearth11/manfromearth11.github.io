@@ -8,7 +8,7 @@
 @media(max-width:800px){.heading:has([data-tex]){font-size:14px}}
 </style></head>
 <body><main><header><h1>OptiFlow</h1><span>From reference actions to transport-guided supervision</span></header>
-<div class="viewport"><div class="diagram"><canvas id="scene" width="2400" height="760" aria-label="Reference and one-step distributions produce samples, reference masses are weighted by Q, Sinkhorn couples the sample sets, and pink samples move to their assigned high-value reference actions during distillation. The value axis points upward from low Q to high Q."></canvas>
+<div class="viewport"><div class="diagram"><canvas id="scene" width="2400" height="760" aria-label="Reference and one-step distributions produce samples, reference masses are weighted by Q, Sinkhorn couples the sample sets, and pink samples move to their assigned high-value reference actions during distillation. Background Q-value shading peaks at the two upper modes in the transport panel."></canvas>
 <div class="label heading blue" style="left:13.333333%;top:27.631579%;width:30%;transform:translate(-50%,calc(-100% - 16px))">Reference flow policy <span data-tex="\mu_\omega(s,z)"></span></div>
 <div class="label heading" style="left:50%;top:27.631579%;width:30%;transform:translate(-50%,calc(-100% - 16px))">Value-weighted<br>Optimal Transport</div>
 <div class="label heading pink" style="left:86.666667%;top:27.631579%;width:26%;transform:translate(-50%,calc(-100% - 16px))">One-step policy <span data-tex="\mu_\theta(s,z)"></span></div>
@@ -93,7 +93,11 @@ function densityContours(panel,spread,weight,color,outlineOnly=false,alpha=1,lev
 let seed=741;function random(){seed=(1664525*seed+1013904223)>>>0;return(seed+.5)/4294967296}function normal(){return Math.sqrt(-2*Math.log(random()))*Math.cos(2*Math.PI*random())}
 const refs=Array.from({length:32},(_,j)=>({x:centers[j%4][0]+normal()*.12,y:centers[j%4][1]+normal()*.12,mode:j%4}));
 const sources=Array.from({length:16},()=>({x:normal()*.24,y:normal()*.24}));
-const q=refs.map(a=>Math.exp((a.mode<2?1:0)/.3)),sum=q.reduce((a,b)=>a+b);q.forEach((_,j)=>q[j]/=sum);
+// The background shading and reference weights share this illustrative Q field.
+function actionValue(x,y){
+ return [-.52,.52].reduce((value,c)=>value+Math.exp(-((x-c)**2+(y-.52)**2)/(2*.32**2)),0);
+}
+const q=refs.map(a=>Math.exp(actionValue(a.x,a.y)/.3)),sum=q.reduce((a,b)=>a+b);q.forEach((_,j)=>q[j]/=sum);
 const costs=sources.map(a=>refs.map(b=>(a.x-b.x)**2+(a.y-b.y)**2));const mean=costs.flat().reduce((a,b)=>a+b)/512;
 const K=costs.map(row=>row.map(c=>Math.exp(-c/mean/.12)));let u=sources.map(()=>1),v=refs.map(()=>1);
 for(let n=0;n<500;n++){u=u.map((_,i)=>(1/16)/K[i].reduce((s,k,j)=>s+k*v[j],0));v=v.map((_,j)=>q[j]/K.reduce((s,row,i)=>s+row[j]*u[i],0));}
@@ -105,14 +109,29 @@ function transportedSource(i,progress){
  const source=sources[i],target=refs[targets[i]];
  return {x:mix(source.x,target.x,progress),y:mix(source.y,target.y,progress)};
 }
-function valueAxis(){
- // Keep the value cue beside the weighted samples in the OT panel.
- const x=panels.ot[0]+size-18,top=panels.ot[1];
- line(x,top+46,x,top+181,gray,.8,1.5);
- arrow(x,top+69,x,top+46,ink,1);
- ctx.save();ctx.fillStyle=ink;ctx.font='14px Arial';ctx.textAlign='right';
- ctx.fillText('High Q',panels.ot[0]+size-7,top+25);
- ctx.fillStyle=gray;ctx.fillText('Low Q',panels.ot[0]+size-7,top+204);
+// Filled contours: discrete value bands with crisp boundaries, no blur.
+const valueField=document.createElement('canvas');
+valueField.width=valueField.height=size*2;
+const valueContext=valueField.getContext('2d');
+const valuePixels=valueContext.createImageData(valueField.width,valueField.height);
+const valueLevels=[.08,.24,.44,.66,.85];
+const valueColors=[[235,239,245],[216,224,237],[191,204,224],[158,177,205],[120,146,184]];
+for(let y=0;y<valueField.height;y++)for(let x=0;x<valueField.width;x++){
+ const value=clamp(actionValue((x+.5)/valueField.width*2.5-1.25,1.25-(y+.5)/valueField.height*2.5));
+ const i=(y*valueField.width+x)*4;
+ const band=valueLevels.reduce((index,level,j)=>value>=level?j:index,-1);
+ if(band<0)continue;
+ const color=valueColors[band];
+ valuePixels.data[i]=color[0];valuePixels.data[i+1]=color[1];valuePixels.data[i+2]=color[2];
+ valuePixels.data[i+3]=255;
+}
+valueContext.putImageData(valuePixels,0,0);
+function valueBackground(){
+ ctx.save();ctx.translate(...panels.ot);
+ ctx.beginPath();ctx.rect(1.5,1.5,size-3,size-3);ctx.clip();
+ // Introduce the Q landscape clearly, then let the arriving samples take focus.
+ ctx.globalAlpha=mix(1,.38,ease((time-3000)/600));
+ ctx.drawImage(valueField,0,0,size,size);
  ctx.restore();
 }
 let time=0,last=0,lastDraw=0;
@@ -120,7 +139,7 @@ function draw(){ctx.clearRect(0,0,1200,380);const f=ease(time/2800),s=ease((time
 frame(panels.ref);frame(panels.ot);frame(panels.out);
 densityContours(panels.ref,f,0,blue,false,1,[.12,.30,.55,.82]);
 evolvingPolicy(panels.out,d);
-valueAxis();
+valueBackground();
 const sampleVisibility=ease((time-2400)/400);
 arrow(290,arrowY,470,arrowY,blue,sampleVisibility);
 document.querySelector('#sample-label').style.opacity=sampleVisibility;
