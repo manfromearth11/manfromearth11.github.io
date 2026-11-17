@@ -39,6 +39,24 @@ def density(t):
     # A small smooth bridge keeps the outer support connected, without holes.
     field += .025 * t * np.exp(-.5 * (X**2 + (Y - .035 * t)**2) / .11**2)
     field /= field.max()
+    # Concentrate the high-density cores toward the tips of the two lobes.
+    # The compact gate is zero near the outer contour, preserving its envelope.
+    cores = np.zeros_like(field)
+    for side in (-1, 1):
+        angle = side * np.pi / 4
+        dx, dy = X - side * .35 * t, Y - .37 * t
+        u = dx * np.cos(angle) + dy * np.sin(angle)
+        v = -dx * np.sin(angle) + dy * np.cos(angle)
+        major, minor = .09 * (1 - t) + .075 * t, .09 * (1 - t) + .038 * t
+        cores += np.exp(-.5 * ((u / major)**2 + (v / minor)**2))
+    gate = np.clip((field - .04) / .12, 0, 1)
+    gate = gate * gate * (3 - 2 * gate)
+    # Compress the broad component monotonically below the second contour.
+    # A subtractive gate would introduce false ridges around the mode interior.
+    compressed = np.where(field > LEVELS[0],
+                          LEVELS[0] + .10 * (1 - np.exp(-np.maximum(field - LEVELS[0], 0) / .10)),
+                          field)
+    field = (1 - t) * field + t * (compressed + cores * gate)
     assert np.max(np.abs(field - field[:, ::-1])) < 1e-12
     return field
 
@@ -47,7 +65,9 @@ def paths(t):
     result = []
     for level in LEVELS:
         pieces = []
-        for points in generator.lines(level):
+        loops = generator.lines(level)
+        assert len(loops) == 1 if level == LEVELS[0] else 1 <= len(loops) <= 2, 'Unexpected contour island'
+        for points in loops:
             assert np.allclose(points[0], points[-1]), 'Contour must stay inside frame'
             coords = np.column_stack(((points[:, 0] + DOMAIN) / (2 * DOMAIN) * 400,
                                       (DOMAIN - points[:, 1]) / (2 * DOMAIN) * 400))

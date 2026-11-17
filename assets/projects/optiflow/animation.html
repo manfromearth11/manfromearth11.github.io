@@ -32,7 +32,8 @@ function evolvingPolicy(panel,progress){
  ctx.fillStyle='#f8ebf2';ctx.fillRect(0,0,policyMotion.size,policyMotion.size);
  frame.forEach((path,i)=>{
   ctx.fillStyle=policyMotion.colors[i];ctx.fill(path);
-  ctx.strokeStyle='#242124';ctx.lineWidth=1.4;ctx.stroke(path);
+  // Keep contour strokes at 1.5 scene pixels, matching the reference panel.
+  ctx.strokeStyle='#242124';ctx.lineWidth=1.5*policyMotion.size/size;ctx.stroke(path);
  });
  ctx.restore();
  ctx.strokeStyle='#000';ctx.lineWidth=2.5;ctx.strokeRect(...panel,size,size);
