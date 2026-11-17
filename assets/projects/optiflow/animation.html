@@ -133,12 +133,25 @@ function valueBackground(){
  ctx.drawImage(valueField,0,0,size,size);
  ctx.restore();
 }
+function valueLegend(){
+ const x=panels.ot[0]+55,y=panels.ot[1]+194,width=110,height=13;
+ const colors=[[250,252,254],...valueColors];
+ ctx.save();
+ colors.forEach((color,i)=>{ctx.fillStyle=`rgb(${color.join(',')})`;ctx.fillRect(x+i*width/colors.length,y,width/colors.length+.1,height)});
+ ctx.strokeStyle='#647080';ctx.lineWidth=.8;ctx.strokeRect(x,y,width,height);
+ ctx.fillStyle='#34465e';ctx.font='12px Arial';ctx.textBaseline='middle';
+ ctx.textAlign='right';ctx.fillText('Low Q',x-6,y+height/2);
+ ctx.textAlign='left';ctx.fillText('High Q',x+width+6,y+height/2);
+ ctx.restore();
+}
+
 let time=0,last=0,lastDraw=0;
 function draw(){ctx.clearRect(0,0,1200,380);const f=ease(time/2800),s=ease((time-3000)/2300),w=ease((time-5700)/600),o=ease((time-6400)/700),hard=ease((time-7200)/400),d=ease((time-8000)/800);const phase=time<3000?0:time<6000?1:time<9000?2:time<13500?3:4;
 frame(panels.ref);frame(panels.ot);frame(panels.out);
 densityContours(panels.ref,f,0,blue,false,1,[.12,.30,.55,.82]);
 evolvingPolicy(panels.out,d);
 valueBackground();
+valueLegend();
 const sampleVisibility=ease((time-2400)/400);
 arrow(290,arrowY,470,arrowY,blue,sampleVisibility);
 document.querySelector('#sample-label').style.opacity=sampleVisibility;
