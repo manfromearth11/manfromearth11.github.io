@@ -5,6 +5,7 @@
 .heading:has([data-tex]){white-space:nowrap;font-size:clamp(14px,1.5vw,22px)}.heading [data-tex]{display:inline-block;margin-left:5px;font-weight:400}
 .flow-label{top:54.054054%;transform:translate(-50%,calc(-100% - 16px));font-size:clamp(14px,1.5vw,22px);white-space:nowrap;opacity:0}
 .embedded main{max-width:none;padding:0 12px}.embedded header{display:none}.embedded .diagram{min-width:0}.embedded .viewport{overflow:hidden}
+@media(max-width:800px){.heading:has([data-tex]){font-size:12px}}
 </style></head>
 <body><main><header><h1>OptiFlow</h1><span>From reference actions to transport-guided supervision</span></header>
 <div class="viewport"><div class="diagram"><canvas id="scene" width="2400" height="1480" aria-label="Reference and one-step distributions produce samples, reference masses are weighted by Q, Sinkhorn couples the sample sets, and the selected assignments supervise distillation."></canvas>
@@ -12,11 +13,30 @@
 <div class="label heading pink" style="left:13.33%;top:65.54%;width:30%;transform:translate(-50%,calc(-100% - 16px))">One-step policy <span data-tex="\mu_\theta(s,z)"></span></div>
 <div class="label heading" style="left:51.67%;top:39.189189%;width:34%;transform:translate(-50%,calc(-100% - 16px))">Value-weighted<br>Optimal Transport</div>
 <div class="label heading pink" style="left:86.67%;top:39.189189%;width:26%;transform:translate(-50%,calc(-100% - 16px))">One-step policy <span data-tex="\mu_\theta(s,z)"></span></div>
-<div id="sample-label" class="label heading flow-label" style="left:33.125%">Sample<br>actions</div>
+<div id="sample-label" class="label heading flow-label" style="left:35.625%">Sample<br>actions</div>
 <div id="distill-label" class="label pink heading flow-label" style="left:69.166667%">Distill</div>
 </div></div>
 </main><script>
 const canvas=document.querySelector('canvas'),ctx=canvas.getContext('2d');ctx.scale(2,2);
+// Contours generated together from one symmetric density by Python.
+// Use the exact frames approved in the isolated motion preview.
+let policyMotion=null;
+fetch(new URL('one-step-motion.json',location.href))
+ .then(response=>{if(!response.ok)throw new Error(response.status);return response.json()})
+ .then(data=>{policyMotion={...data,frames:data.frames.map(frame=>frame.map(path=>new Path2D(path)))}})
+ .catch(error=>console.error('Unable to load policy motion',error));
+function evolvingPolicy(panel,progress){
+ if(!policyMotion){densityContours(panel,0,0,pink);return}
+ const frame=policyMotion.frames[Math.round(clamp(progress)*(policyMotion.frames.length-1))];
+ ctx.save();ctx.translate(...panel);ctx.scale(size/policyMotion.size,size/policyMotion.size);
+ ctx.fillStyle='#f8ebf2';ctx.fillRect(0,0,policyMotion.size,policyMotion.size);
+ frame.forEach((path,i)=>{
+  ctx.fillStyle=policyMotion.colors[i];ctx.fill(path);
+  ctx.strokeStyle='#242124';ctx.lineWidth=1.4;ctx.stroke(path);
+ });
+ ctx.restore();
+ ctx.strokeStyle='#000';ctx.lineWidth=2.5;ctx.strokeRect(...panel,size,size);
+}
 const blue='#3475cf',pink='#dc6596',ink='#253449',gray='#8490a0',size=220;
 const centers=[[-.52,.52],[.52,.52],[-.52,-.52],[.52,-.52]];
 const arrowY=400;
@@ -27,12 +47,15 @@ function arrow(x,y,X,Y,color=gray,alpha=1){line(x,y,X,Y,color,alpha,3);const a=M
 function frame(pos,sz=size){ctx.fillStyle='#fafcfe';ctx.fillRect(...pos,sz,sz);ctx.strokeStyle='#000000';ctx.lineWidth=2.5;ctx.strokeRect(...pos,sz,sz);line(pos[0]+12,pos[1]+sz/2,pos[0]+sz-12,pos[1]+sz/2,'#edf1f6');line(pos[0]+sz/2,pos[1]+12,pos[0]+sz/2,pos[1]+sz-12,'#edf1f6')}
 function dot(p,r,color,alpha=1){ctx.globalAlpha=alpha;ctx.beginPath();ctx.arc(...p,r,0,2*Math.PI);ctx.fillStyle=color;ctx.fill();ctx.strokeStyle='white';ctx.lineWidth=.7;ctx.stroke();ctx.globalAlpha=1}
 function at(panel,a,sz=size){return[panel[0]+sz/2+a.x*sz/2.5,panel[1]+sz/2-a.y*sz/2.5]}
-function densityContours(panel,spread,weight,color,outlineOnly=false,alpha=1,levels=[.12,.32,.65,1.05,1.5]){
+const densityCache=new Map();
+function densityContours(panel,spread,weight,color,outlineOnly=false,alpha=1,levels=[.12,.32,.65,1.05,1.5],shortTails=0){
+ const cacheKey=JSON.stringify([Math.round(spread*90),Math.round(weight*90),color,outlineOnly,alpha,levels,shortTails]);
+ if(densityCache.has(cacheKey)){ctx.drawImage(densityCache.get(cacheKey),...panel,size,size);return}
  const n=56,domain=1.25,step=2*domain/n,field=new Float64Array((n+1)*(n+1));
  const sigma=mix(color===pink?.18:.25,.15,spread);
  for(let y=0;y<=n;y++)for(let x=0;x<=n;x++){
   const X=-domain+x*step,Y=domain-y*step;let value=0;
-  centers.forEach((c,j)=>{const dx=X-c[0]*spread,dy=Y-c[1]*spread;
+  centers.forEach((c,j)=>{const tailScale=j>=2?mix(1,.35,shortTails):1;const dx=X-c[0]*spread*tailScale,dy=Y-c[1]*spread*tailScale;
    const angle=c[0]*c[1]>0?Math.PI/4:-Math.PI/4;
    const u=dx*Math.cos(angle)+dy*Math.sin(angle),v=-dx*Math.sin(angle)+dy*Math.cos(angle);
    value+=mix(1,j<2?1.92:.08,weight)*Math.exp(-.5*((u/(sigma*mix(1,2.1,spread)))**2+(v/sigma)**2));
@@ -56,6 +79,7 @@ function densityContours(panel,spread,weight,color,outlineOnly=false,alpha=1,lev
   }
   ctx.globalAlpha=alpha;ctx.fillStyle=color+(levelIndex===0?'12':'19');if(!outlineOnly)ctx.fill('evenodd');ctx.strokeStyle='#000000';ctx.lineWidth=outlineOnly?1.8:1.5;ctx.stroke();ctx.globalAlpha=1;
  });
+ const cached=document.createElement('canvas');cached.width=cached.height=size*2;cached.getContext('2d').drawImage(canvas,panel[0]*2,panel[1]*2,size*2,size*2,0,0,size*2,size*2);densityCache.set(cacheKey,cached);
 }
 let seed=741;function random(){seed=(1664525*seed+1013904223)>>>0;return(seed+.5)/4294967296}function normal(){return Math.sqrt(-2*Math.log(random()))*Math.cos(2*Math.PI*random())}
 const refs=Array.from({length:32},(_,j)=>({x:centers[j%4][0]+normal()*.12,y:centers[j%4][1]+normal()*.12,mode:j%4}));
@@ -68,16 +92,16 @@ const P=K.map((row,i)=>row.map((k,j)=>k*u[i]*v[j])),targets=P.map(row=>row.index
 const residual=Math.max(...P.map(row=>Math.abs(row.reduce((a,b)=>a+b)-1/16)),...q.map((mass,j)=>Math.abs(P.reduce((s,row)=>s+row[j],0)-mass)));
 if(residual>1e-6)console.error('Transport marginal residual',residual);
 let time=0,last=0,lastDraw=0;
-function draw(){ctx.clearRect(0,0,1200,740);const f=ease(time/2800),s=ease((time-3000)/2300),w=ease((time-6000)/2200),o=ease((time-9000)/2300),hard=ease((time-11500)/1100),d=ease((time-13500)/800);const phase=time<3000?0:time<6000?1:time<9000?2:time<13500?3:4;
+function draw(){ctx.clearRect(0,0,1200,740);const f=ease(time/2800),s=ease((time-3000)/2300),w=ease((time-5700)/600),o=ease((time-6400)/700),hard=ease((time-7200)/400),d=ease((time-8000)/800);const phase=time<3000?0:time<6000?1:time<9000?2:time<13500?3:4;
 frame(panels.ref);frame(panels.src);frame(panels.ot);frame(panels.out);
 densityContours(panels.ref,f,0,blue,false,1,[.12,.30,.55,.82]);densityContours(panels.src,0,0,pink);
 const sampleVisibility=ease((time-2400)/400);
-line(280,205,305,205,ink,sampleVisibility,3);
-line(305,205,305,595,ink,sampleVisibility,3);
-line(280,595,305,595,ink,sampleVisibility,3);
-arrow(305,arrowY,490,arrowY,ink,sampleVisibility);
+line(280,205,365,205,ink,sampleVisibility,3);
+line(365,205,365,595,ink,sampleVisibility,3);
+line(280,595,365,595,ink,sampleVisibility,3);
+arrow(365,arrowY,490,arrowY,ink,sampleVisibility);
 document.querySelector("#sample-label").style.opacity=sampleVisibility;
-const distillVisibility=clamp((time-13200)/300);arrow(750,arrowY,910,arrowY,pink,.9*distillVisibility);document.querySelector("#distill-label").style.opacity=distillVisibility;
+const distillVisibility=clamp((time-7800)/200);arrow(750,arrowY,910,arrowY,pink,.9*distillVisibility);document.querySelector("#distill-label").style.opacity=distillVisibility;
 if(o>0){P.forEach((row,i)=>row.forEach((mass,j)=>{const strength=mass/maxMass;if(strength<.012)return;const a=at(panels.ot,sources[i]),b=at(panels.ot,refs[j]);line(...a,mix(a[0],b[0],o),mix(a[1],b[1],o),'#7189ae',(.08+.35*strength)*o, .4+3*strength)}));
 if(hard>0)sources.forEach((a,i)=>{line(...at(panels.ot,a),...at(panels.ot,refs[targets[i]]),'#8a4e9d',hard*.8,1+3*P[i][targets[i]]/maxMass)});
 }
@@ -102,12 +126,9 @@ if(time>=3000){
  refs.forEach((a,j)=>scatter(a,j,panels.ref,blue,Math.sqrt(mix(1/32,q[j],w)*32)*4.4,1));
  sources.forEach((a,i)=>scatter(a,i,panels.src,pink,4.4,8));
 }
-// Keep the full X-shaped envelope while emphasizing the two high-value modes.
-ctx.fillStyle='#f9eaf1';ctx.fillRect(panels.out[0]+2,panels.out[1]+2,size-4,size-4);
-densityContours(panels.out,d,0,pink,false,1,[.12]);
-densityContours(panels.out,d,d,pink,false,1,[.32,.65,1.05,1.5]);
+evolvingPolicy(panels.out,d);
 
 }
-function tick(now){if(last)time=(time+Math.min(now-last,100))%19000;last=now;if(now-lastDraw>40){draw();lastDraw=now}requestAnimationFrame(tick)}
+function tick(now){if(last&&policyMotion)time=(time+Math.min(now-last,100))%13000;last=now;if(now-lastDraw>=1000/60-1){draw();lastDraw=now}requestAnimationFrame(tick)}
 window.addEventListener('DOMContentLoaded',()=>{if(!window.katex)return;document.querySelectorAll('[data-tex]').forEach(el=>katex.render(el.dataset.tex,el,{throwOnError:false}));});requestAnimationFrame(tick);
 </script></body></html>
