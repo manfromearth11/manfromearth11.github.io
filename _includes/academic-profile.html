@@ -33,7 +33,7 @@
         <div>
           {% if paper.image %}<img class="paper-image" src="{{ paper.image | relative_url }}" alt="Figure for {{ paper.title | escape }}" loading="lazy">{% endif %}
           <h3>{% if paper.paper %}<a href="{{ paper.paper | escape }}">{{ paper.title | escape }}</a>{% else %}{{ paper.title | escape }}{% endif %}</h3>
-          <p class="authors">{{ paper.authors | escape | replace: p.name, '<strong>Jaehun Shon</strong>' }}</p>
+          <p class="authors">{{ paper.authors | escape | replace: p.name, '<strong>Jaehun Shon</strong>' | replace: 'Jinha Choi', '<a href="https://jinhac174.github.io/">Jinha Choi</a>' | replace: 'Jongwook Jeon', '<a href="https://jjw2602.github.io/">Jongwook Jeon</a>' }}</p>
           {% if paper.description %}<p class="abstract">{{ paper.description | escape }}</p>{% endif %}
           <div class="paper-links">{% if paper.project %}<a href="{{ paper.project | relative_url }}">Project ↗</a>{% endif %}{% if paper.paper %}<a href="{{ paper.paper | escape }}">Paper ↗</a>{% endif %}{% if paper.code %}<a href="{{ paper.code | escape }}">Code ↗</a>{% endif %}</div>
         </div>

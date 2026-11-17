@@ -4,12 +4,13 @@ title: OptiFlow
 permalink: /projects/optiflow/
 description: Learning Multimodal One-step Flow Policy via Value-weighted Optimal Transport. NeurIPS 2026.
 ---
-<link rel="stylesheet" href="{{ '/assets/css/optiflow.css' | relative_url }}?v=20261117-row">
+<link rel="stylesheet" href="{{ '/assets/css/optiflow.css' | relative_url }}?v=20261117-prose">
 <main id="main" class="project-page">
   <header class="project-hero" id="top">
     <p class="project-name">Opti<span>Flow</span></p>
-    <h1>Learning Multimodal One-step Flow Policy<br class="desktop-break"> via Value-weighted Optimal Transport</h1>
-    <p class="project-authors"><a href="{{ '/' | relative_url }}">Jaehun Shon<sup>*</sup></a><span>Jinha Choi<sup>*</sup></span><span>Jongwook Jeon</span><a href="https://www.jmlee.kr/">Jongmin Lee<sup>†</sup></a></p>
+    <h1>Learning Multimodal One-step Flow Policy via Value-weighted Optimal Transport</h1>
+    <p class="project-venue">NeurIPS 2026</p>
+    <p class="project-authors"><a href="{{ '/' | relative_url }}">Jaehun Shon<sup>*</sup></a><a href="https://jinhac174.github.io/">Jinha Choi<sup>*</sup></a><a href="https://jjw2602.github.io/">Jongwook Jeon</a><a href="https://www.jmlee.kr/">Jongmin Lee<sup>†</sup></a></p>
     <p class="project-affiliation">Department of Artificial Intelligence, Yonsei University</p>
     <div class="project-links"><a href="https://arxiv.org/pdf/2609.15883">Paper ↗</a><a href="https://github.com/Yonsei-DILLab/OptiFlow">Code ↗</a><a href="https://arxiv.org/abs/2609.15883">arXiv ↗</a><a href="#citation">BibTeX ↓</a></div>
   </header>
@@ -100,8 +101,8 @@ description: Learning Multimodal One-step Flow Policy via Value-weighted Optimal
 </div><h3 class="subsection-title">Four equally optimal goals</h3><p class="project-prose">The four goals are equally optimal, but unevenly represented in the dataset. FQL trades off diversity and quality as its distillation strength changes: stronger distillation improves mode coverage but reduces return. OptiFlow achieves balanced coverage of all four goals with the highest return in this experiment.</p><p class="project-prose">This experiment uses a standard BC-trained reference policy to isolate the effect of OT distillation from value-aware reference learning.</p><div class="figure-grid goals-grid"><figure><a class="zoom-figure" href="/assets/projects/optiflow/01_dataset_distribution.png"><img src="/assets/projects/optiflow/01_dataset_distribution.png" loading="lazy" alt="Four-mode environment: Dataset"></a><figcaption><strong>Dataset</strong></figcaption></figure>
 <figure><a class="zoom-figure" href="/assets/projects/optiflow/03_FQL_alpha0p1.png"><img src="/assets/projects/optiflow/03_FQL_alpha0p1.png" loading="lazy" alt="Four-mode environment: FQL / α = 0.1"></a><figcaption><strong>FQL / <span class="math-inline">\alpha = 0.1</span></strong><span class="goal-note">One goal, sharp paths</span></figcaption></figure>
 <figure><a class="zoom-figure" href="/assets/projects/optiflow/04_FQL_alpha1.png"><img src="/assets/projects/optiflow/04_FQL_alpha1.png" loading="lazy" alt="Four-mode environment: FQL / α = 1"></a><figcaption><strong>FQL / <span class="math-inline">\alpha = 1</span></strong></figcaption></figure>
-<figure><a class="zoom-figure" href="/assets/projects/optiflow/05_FQL_alpha10.png"><img src="/assets/projects/optiflow/05_FQL_alpha10.png" loading="lazy" alt="Four-mode environment: FQL / α = 10"></a><figcaption><strong>FQL / <span class="math-inline">\alpha = 10</span></strong><span class="goal-note">More goals,<br>noisier paths</span></figcaption></figure>
-<figure><a class="zoom-figure" href="/assets/projects/optiflow/06_OptiFlow_BC.png"><img src="/assets/projects/optiflow/06_OptiFlow_BC.png" loading="lazy" alt="Four-mode environment: OptiFlow"></a><figcaption><strong>OptiFlow</strong><span class="goal-note">All four goals,<br>highest return</span></figcaption></figure>
+<figure><a class="zoom-figure" href="/assets/projects/optiflow/05_FQL_alpha10.png"><img src="/assets/projects/optiflow/05_FQL_alpha10.png" loading="lazy" alt="Four-mode environment: FQL / α = 10"></a><figcaption><strong>FQL / <span class="math-inline">\alpha = 10</span></strong><span class="goal-note">More goals, noisier paths</span></figcaption></figure>
+<figure><a class="zoom-figure" href="/assets/projects/optiflow/06_OptiFlow_BC.png"><img src="/assets/projects/optiflow/06_OptiFlow_BC.png" loading="lazy" alt="Four-mode environment: OptiFlow"></a><figcaption><strong>OptiFlow</strong><span class="goal-note">All four goals, highest return</span></figcaption></figure>
     </div>
   </section>
   <section id="results" class="project-section"><p class="section-number">06 / OFFLINE RL BENCHMARKS</p>
