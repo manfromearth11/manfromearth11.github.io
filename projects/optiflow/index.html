@@ -7,51 +7,82 @@ description: Learning Multimodal One-step Flow Policy via Value-weighted Optimal
 <link rel="stylesheet" href="{{ '/assets/css/optiflow.css' | relative_url }}">
 <main id="main" class="project-page">
   <header class="project-hero" id="top">
-    <p class="project-venue">NEURIPS 2026</p>
     <p class="project-name">Opti<span>Flow</span></p>
     <h1>Learning Multimodal One-step Flow Policy<br class="desktop-break"> via Value-weighted Optimal Transport</h1>
     <p class="project-authors"><a href="{{ '/' | relative_url }}">Jaehun Shon<sup>*</sup></a><span>Jinha Choi<sup>*</sup></span><span>Jongwook Jeon</span><a href="https://www.jmlee.kr/">Jongmin Lee<sup>†</sup></a></p>
     <p class="project-affiliation">Department of Artificial Intelligence, Yonsei University</p>
     <div class="project-links"><a href="https://arxiv.org/pdf/2609.15883">Paper ↗</a><a href="https://github.com/Yonsei-DILLab/OptiFlow">Code ↗</a><a href="https://arxiv.org/abs/2609.15883">arXiv ↗</a><a href="#citation">BibTeX ↓</a></div>
-    <p class="project-lead">Several actions can be good.<br>Learn to keep their distinct modes—with a <strong>one-step policy.</strong></p>
   </header>
-  <nav class="project-nav" aria-label="Project sections"><a href="#challenge">Challenge</a><a href="#method">Method</a><a href="#algorithm">Algorithm</a><a href="#experiments">Experiments</a><a href="#results">Results</a></nav>
+
+  <nav class="project-nav" aria-label="Project sections"><a href="#overview">Overview</a><a href="#challenge">Challenge</a><a href="#method">Method</a><a href="#algorithm">Algorithm</a><a href="#experiments">Experiments</a><a href="#results">Results</a></nav>
+
+
+  <section id="overview" class="project-section">
+    <p class="section-number">01 / OVERVIEW</p>
+    <figure class="project-figure">
+      <div class="transport-animation"><iframe src="{{ '/assets/projects/optiflow/animation.html' | relative_url }}?embed" title="OptiFlow: sampling, value-weighted optimal transport, and one-step policy distillation" loading="lazy"></iframe></div>
+    </figure>
+    <p class="project-prose">OptiFlow learns an expressive one-step policy for offline reinforcement learning through <strong>value-weighted optimal transport</strong>. Our contributions are:</p>
+    <ul class="overview-contributions">
+      <li><strong>Policy improvement with behavior-supported targets.</strong> The reference policy supplies candidate actions, and critic values determine their priority. The one-step policy learns from these targets without direct critic maximization.</li>
+      <li><strong>Preserving multiple high-value modes.</strong> Transport constraints allocate mass across good actions, helping retain distinct modes even when the dataset represents them unevenly.</li>
+      <li><strong>One-step inference with strong empirical performance.</strong> All transport computation stays in training. The deployed policy takes a single forward pass, with gains over FQL and GFP on aggregate OGBench and D4RL AntMaze benchmarks.</li>
+    </ul>
+  </section>
   <section id="challenge" class="project-section">
-    <p class="section-number">01 / THE CHALLENGE</p><h2>Expressiveness and speed</h2>
-    <div class="project-prose"><p>Offline reinforcement learning learns from a fixed dataset. For a given state, several distinct actions may lead to high return. The goal is to retain these high-value modes while avoiding low-value or unsupported actions.</p>
-    <p>Gaussian policies are fast, but unimodal. Multi-step flow policies can represent complex action distributions, but require repeated computation. Distilling them into one step can collapse distinct modes; directly maximizing the critic can pull actions outside the data support.</p>
-    <p class="project-question">Can we learn an expressive one-step policy?</p></div>
+    <p class="section-number">02 / THE CHALLENGE</p><h2>In-support, high-value, expressive—and speed</h2>
+    <div class="project-prose">
+      <p>We aim to address four requirements for offline RL:</p>
+      <ul>
+        <li><strong>In-support.</strong> Choose actions supported by the offline data, where value estimates are more reliable.</li>
+        <li><strong>High-value.</strong> Favor good actions rather than simply reproduce the dataset, which may also contain suboptimal behavior.</li>
+        <li><strong>Expressive.</strong> Represent multiple distinct good actions without collapsing to a single mode or averaging between them.</li>
+        <li><strong>Speed.</strong> Generate an action in a single forward pass, avoiding iterative sampling at deployment.</li>
+      </ul>
+      <p class="project-question">Can we preserve distinct, high-value modes within behavior support—and generate actions in one step?</p>
+    </div>
   </section>
   <section id="method" class="project-section">
-    <p class="section-number">02 / OUR APPROACH</p><h2>Learn the policy through sample allocation</h2>
-    <p class="project-prose">OptiFlow improves a one-step policy by selecting among actions proposed by a reference flow policy. Instead of moving actions uphill through the critic, it allocates more supervision to high-value reference candidates. Value determines how much mass a candidate receives; geometry determines the pairings.</p>
-    <figure class="project-figure"><a class="zoom-figure" href="{{ '/assets/projects/optiflow/overview.png' | relative_url }}"><img src="{{ '/assets/projects/optiflow/overview.png' | relative_url }}" width="2200" height="1320" alt="OptiFlow overview: reference policy and critic, value-weighted entropic optimal transport, and one-step distillation"></a><figcaption>Reference actions, critic scores, and action distances define a transport plan for distillation. Figure 1 of the paper. Select the figure to enlarge.</figcaption></figure>
-    <p class="project-prose">The reference policy learns from dataset actions and supplies behavior-supported candidates. Value-weighted OT assigns more mass to better candidates while preserving their distinct modes. We distill these assignments into a one-step policy, so the extra computation stays in training.</p>
+    <p class="section-number">03 / OUR APPROACH</p>
+    <figure class="project-figure">
+      <a class="zoom-figure" href="{{ '/assets/projects/optiflow/overview.png' | relative_url }}"><img src="{{ '/assets/projects/optiflow/overview.png' | relative_url }}" width="2200" height="1320" loading="lazy" alt="Figure 1: reference policy and critic learning, entropic optimal transport, and distillation into a one-step policy."></a>
+    </figure>
+    <ol class="method-steps">
+      <li><h3>Learn the reference policy and critic</h3><p>The reference policy proposes actions learned from offline data. The critic estimates their values.</p></li>
+      <li><h3>Match with value-weighted optimal transport</h3><p><strong>Higher-value reference actions receive more weight.</strong> Optimal transport uses these weights and action distances to assign targets to one-step samples, preserving distinct high-value modes.</p></li>
+      <li><h3>Distill into a one-step policy</h3><p>Train the one-step policy on its assigned targets. At inference, generate an action in one forward pass.</p></li>
+    </ol>
   </section>
   <section id="algorithm" class="project-section">
-    <p class="section-number">03 / ALGORITHM</p><h2>Algorithm</h2>
-    <details class="algorithm-toggle">
-      <summary>Click to see the full algorithm</summary>
-      <figure class="algorithm-original">
-        <a class="zoom-figure" href="{{ '/assets/projects/optiflow/algorithm.png' | relative_url }}"><img src="{{ '/assets/projects/optiflow/algorithm.png' | relative_url }}" width="1212" height="537" loading="lazy" alt="Algorithm 1: OptiFlow training, reproduced directly from page 6 of the paper PDF."></a>
-        <figcaption><a href="https://arxiv.org/pdf/2609.15883v2#page=6">Algorithm 1 · paper, page 6 ↗</a></figcaption>
-      </figure>
-    </details>
+    <p class="section-number">04 / ALGORITHM</p>
+
     <ul class="algorithm-summary">
-      <li>OptiFlow has three components: a critic Q<sub>φ</sub>, a reference flow policy μ<sub>ω</sub>, and a one-step policy μ<sub>θ</sub>.</li>
-      <li><strong>The critic</strong> is trained with the standard Bellman loss.</li>
+      <li>OptiFlow has three components: a critic <span class="math-inline">Q_\phi</span>, a reference flow policy <span class="math-inline">\mu_\omega</span>, and a one-step policy <span class="math-inline">\mu_\theta</span>.</li>
+      <li><strong>The critic</strong> is trained with the standard TD loss.</li>
       <li><strong>The reference policy</strong> is trained with value-aware behavior cloning (VaBC):
         <div class="language-math">\mathcal L_{\mathrm{ref}}(\omega)=\mathbb E\left[\underbrace{g_\eta(s,a)}_{\text{Value weight}}\underbrace{\left\|v_\omega(s,a_t,t)-(a-\epsilon)\right\|_2^2}_{\text{Flow-matching loss}}\right]</div>
-        Here, a is a dataset action, ε is Gaussian noise, and a<sub>t</sub> = (1 − t)ε + ta. The weight g<sub>η</sub> favors higher-value dataset actions. <strong>Setting g<sub>η</sub> = 1 gives standard BC and yields OptiFlow-BC.</strong>
+        Here, <span class="math-inline">a</span> is a dataset action, <span class="math-inline">\epsilon</span> is Gaussian noise, and <span class="math-inline">a_t = (1-t)\epsilon + ta</span>. The weight <span class="math-inline">g_\eta</span> favors higher-value dataset actions.
       </li>
       <li><strong>The one-step policy</strong> learns from reference actions assigned by value-weighted optimal transport:
-        <div class="language-math">\mathcal L_{\mathrm{distill}}(\theta)=\mathbb E\left[\sum_i\underbrace{P^*_{i,j_i^*}}_{\text{Transport weight}}\underbrace{\left\|\mu_\theta(s,z_i)-\tilde a_{j_i^*}\right\|_2^2}_{\text{Distillation loss}}\right],\qquad j_i^*\in\arg\max_jP^*_{ij}</div>
-        P* is the value-weighted OT plan, and ã is a reference action. The plan and targets are fixed during the update; there is <strong>no direct critic maximization</strong>. This distillation is the same in OptiFlow and OptiFlow-BC.
+        <details class="ot-details">
+          <summary>How does value-weighted optimal transport work?</summary>
+          <div class="ot-details-content">
+            <p>For each state, sample <span class="math-inline">N</span> one-step actions <span class="math-inline">a_{\theta,i}^{s}</span> and <span class="math-inline">M</span> reference actions <span class="math-inline">\tilde a_{\omega,j}^{s}</span>. Give every one-step sample equal mass and prioritize reference actions using their critic values:</p>
+            <div class="language-math">p_i=\frac{1}{N},\qquad q_j^{s}=\frac{\exp(Q_\phi(s,\tilde a_{\omega,j}^{s})/\tau)}{\sum_{k=1}^{M}\exp(Q_\phi(s,\tilde a_{\omega,k}^{s})/\tau)}</div>
+            <p>Value determines the reference mass. Geometry determines the matching cost, using squared action distances normalized by their per-state mean <span class="math-inline">\bar c^{s}</span>:</p>
+            <div class="language-math">C_{ij}^{s}=\frac{\|a_{\theta,i}^{s}-\tilde a_{\omega,j}^{s}\|_2^2}{\bar c^{s}}</div>
+            <p>Sinkhorn computes an entropy-regularized transport plan with these row and column marginals:</p>
+            <div class="language-math">P^{s,*}=\arg\min_{P\geq0}\left[\langle P,C^{s}\rangle+\varepsilon\sum_{i,j}P_{ij}(\log P_{ij}-1)\right],\qquad P\mathbf1=p,\quad P^\top\mathbf1=q^{s}</div>
+            <p>Each one-step sample then takes the reference action with the largest mass in its row as its target. That transport mass also weights the distillation update below.</p>
+          </div>
+        </details>
+        <div class="language-math">\mathcal L_{\mathrm{distill}}(\theta)=\mathbb E_{s\sim\mathcal D}\left[\sum_{i=1}^{N}\underbrace{P^{s,*}_{i,j_i^*}}_{\text{Transport weight}}\underbrace{\left\|\mu_\theta(s,z_i)-\tilde a_{\omega,j_i^*}^{s}\right\|_2^2}_{\text{Distillation loss}}\right],\qquad j_i^*\in\arg\max_jP^{s,*}_{ij}</div>
+        <span class="math-inline">P^{s,*}</span> is the value-weighted OT plan for state <span class="math-inline">s</span>. For each one-step sample <span class="math-inline">i</span>, <span class="math-inline">j_i^*</span> selects the reference action with the largest transport mass in row <span class="math-inline">i</span>. The selected action <span class="math-inline">\tilde a_{\omega,j_i^*}^{s}</span> is its distillation target. The plan and targets are fixed during the update. There is <strong>no direct critic maximization</strong>. This distillation is the same in OptiFlow and OptiFlow-BC.
       </li>
       <li><strong>The output is the one-step policy:</strong> a single forward pass at inference.</li>
     </ul>
   </section>
-  <section id="experiments" class="project-section"><p class="section-number">04 / CONTROLLED EXPERIMENTS</p><h2>Does the policy keep multiple good modes?</h2>
+  <section id="experiments" class="project-section"><p class="section-number">05 / CONTROLLED EXPERIMENTS</p><h2>Does the policy keep multiple good modes?</h2>
     <h3 class="subsection-title">Two-mode bandit</h3><p class="project-prose">Two high-value modes are separated by a suboptimal region. Strong distillation can pull samples toward that region; weak distillation can let critic maximization push them outside behavior support. OptiFlow captures both high-value modes in this diagnostic.</p>
     <div class="figure-grid bandit-grid">
 <figure><a class="zoom-figure" href="/assets/projects/optiflow/00_reward_landscape.png"><img src="/assets/projects/optiflow/00_reward_landscape.png" loading="lazy" alt="Two-mode bandit: True reward"></a><figcaption><strong>True reward</strong><span>Two high-value modes</span></figcaption></figure>
@@ -61,13 +92,13 @@ description: Learning Multimodal One-step Flow Policy via Value-weighted Optimal
 <figure><a class="zoom-figure" href="/assets/projects/optiflow/04_fql_q.png"><img src="/assets/projects/optiflow/04_fql_q.png" loading="lazy" alt="Two-mode bandit: FQL-Q"></a><figcaption><strong>FQL-Q</strong><span>Weak distillation: outside support</span></figcaption></figure>
 <figure><a class="zoom-figure" href="/assets/projects/optiflow/06_OptiFlow.png"><img src="/assets/projects/optiflow/06_OptiFlow.png" loading="lazy" alt="Two-mode bandit: OptiFlow"></a><figcaption><strong>OptiFlow</strong><span>Both good modes, within support</span></figcaption></figure>
 </div><p class="figure-note">Paper Figure 2. Each dot is a sampled action, not a trajectory; the curve indicates behavior support. Select any panel to enlarge.</p><h3 class="subsection-title">Four equally optimal goals</h3><p class="project-prose">The four goals are equally optimal, but unevenly represented in the dataset. FQL trades off diversity and quality as its distillation strength changes: stronger distillation improves mode coverage but reduces return. OptiFlow-BC achieves balanced coverage of all four goals with the highest return in this experiment.</p><p class="project-prose">Here we use <a href="#algorithm">OptiFlow-BC</a>, with a standard BC-trained reference policy, to isolate the effect of OT distillation from value-aware reference learning.</p><div class="figure-grid goals-grid"><figure><a class="zoom-figure" href="/assets/projects/optiflow/01_dataset_distribution.png"><img src="/assets/projects/optiflow/01_dataset_distribution.png" loading="lazy" alt="Four-mode environment: Dataset"></a><figcaption>Dataset</figcaption></figure>
-<figure><a class="zoom-figure" href="/assets/projects/optiflow/03_FQL_alpha0p1.png"><img src="/assets/projects/optiflow/03_FQL_alpha0p1.png" loading="lazy" alt="Four-mode environment: FQL / α = 0.1"></a><figcaption>FQL / α = 0.1</figcaption></figure>
-<figure><a class="zoom-figure" href="/assets/projects/optiflow/04_FQL_alpha1.png"><img src="/assets/projects/optiflow/04_FQL_alpha1.png" loading="lazy" alt="Four-mode environment: FQL / α = 1"></a><figcaption>FQL / α = 1</figcaption></figure>
-<figure><a class="zoom-figure" href="/assets/projects/optiflow/05_FQL_alpha10.png"><img src="/assets/projects/optiflow/05_FQL_alpha10.png" loading="lazy" alt="Four-mode environment: FQL / α = 10"></a><figcaption>FQL / α = 10</figcaption></figure>
+<figure><a class="zoom-figure" href="/assets/projects/optiflow/03_FQL_alpha0p1.png"><img src="/assets/projects/optiflow/03_FQL_alpha0p1.png" loading="lazy" alt="Four-mode environment: FQL / α = 0.1"></a><figcaption>FQL / <span class="math-inline">\alpha = 0.1</span></figcaption></figure>
+<figure><a class="zoom-figure" href="/assets/projects/optiflow/04_FQL_alpha1.png"><img src="/assets/projects/optiflow/04_FQL_alpha1.png" loading="lazy" alt="Four-mode environment: FQL / α = 1"></a><figcaption>FQL / <span class="math-inline">\alpha = 1</span></figcaption></figure>
+<figure><a class="zoom-figure" href="/assets/projects/optiflow/05_FQL_alpha10.png"><img src="/assets/projects/optiflow/05_FQL_alpha10.png" loading="lazy" alt="Four-mode environment: FQL / α = 10"></a><figcaption>FQL / <span class="math-inline">\alpha = 10</span></figcaption></figure>
 <figure><a class="zoom-figure" href="/assets/projects/optiflow/06_OptiFlow_BC.png"><img src="/assets/projects/optiflow/06_OptiFlow_BC.png" loading="lazy" alt="Four-mode environment: OptiFlow-BC"></a><figcaption>OptiFlow-BC</figcaption></figure>
     </div><p class="figure-note">Paper Figure 4. OptiFlow-BC is a controlled variant, distinct from the full method.</p>
   </section>
-  <section id="results" class="project-section"><p class="section-number">05 / OFFLINE RL BENCHMARKS</p><h2>Performance across navigation and manipulation</h2><p class="project-prose">OptiFlow improves the aggregate OGBench and D4RL AntMaze scores over FQL and GFP. On D4RL Adroit, GFP scores higher. The comparison below is an excerpt from the full benchmark table.</p>
+  <section id="results" class="project-section"><p class="section-number">06 / OFFLINE RL BENCHMARKS</p><h2>Performance across navigation and manipulation</h2><p class="project-prose">OptiFlow improves the aggregate OGBench and D4RL AntMaze scores over FQL and GFP. On D4RL Adroit, GFP scores higher. The comparison below is an excerpt from the full benchmark table.</p>
     <div class="result-table" tabindex="0" role="region" aria-label="Benchmark results, scroll horizontally on small screens"><table><caption>Aggregate results · paper Table 1</caption><thead><tr><th scope="col">Benchmark</th><th scope="col">FQL</th><th scope="col">GFP</th><th scope="col">OptiFlow</th></tr></thead><tbody>
       <tr><th scope="row">OGBench · state</th><td>39.0 ± 0.4</td><td>45.6 ± 0.4</td><td><strong>48.3 ± 0.4</strong></td></tr>
       <tr><th scope="row">OGBench · visual</th><td>65.4 ± 1.8</td><td>57.7 ± 1.0</td><td><strong>75.9 ± 1.3</strong></td></tr>
@@ -78,7 +109,7 @@ description: Learning Multimodal One-step Flow Policy via Value-weighted Optimal
     <h3 class="subsection-title">What does transport contribute?</h3><p class="project-prose">On the same 10-task OGBench ablation suite, FQL and OptiFlow-BC use the same standard BC reference setup. Changing the distillation mechanism raises average one-step success from <strong>37.6% to 48.6%</strong>. Adding the value-aware reference in full OptiFlow raises it further to <strong>57.3%</strong>. Better target allocation and better candidate proposals contribute separately.</p><p class="figure-note">Controlled ablation, Appendix Table 15; these 10-task averages are distinct from the aggregate benchmarks above.</p>
     <p class="project-prose"><a href="https://arxiv.org/html/2609.15883v2#S5.T1">Full benchmark comparison ↗</a></p>
   </section>
-  <section id="citation" class="project-section"><div class="citation-heading"><div><p class="section-number">06 / CITATION</p><h2>BibTeX</h2></div><button id="copy-citation" type="button">Copy BibTeX</button></div><pre><code id="bibtex">@misc{shon2026optiflow,
+  <section id="citation" class="project-section"><div class="citation-heading"><div><p class="section-number">07 / CITATION</p><h2>BibTeX</h2></div><button id="copy-citation" type="button">Copy BibTeX</button></div><pre><code id="bibtex">@misc{shon2026optiflow,
   title={Learning Multimodal One-step Flow Policy
          via Value-weighted Optimal Transport},
   author={Jaehun Shon and Jinha Choi and
@@ -91,5 +122,6 @@ description: Learning Multimodal One-step Flow Policy via Value-weighted Optimal
 }</code></pre><p id="copy-status" role="status" aria-live="polite"></p><p class="figure-note">Figures and results from the authors’ paper, arXiv v2. Accepted at NeurIPS 2026.</p></section>
 </main>
 <dialog id="figure-viewer" aria-label="Expanded paper figure"><button id="close-figure" autofocus>Close ×</button><img id="expanded-figure" alt=""></dialog>
-<script src="https://cdn.jsdelivr.net/npm/vditor@4.0.1/dist/index.min.js" defer></script>
-<script src="{{ '/assets/js/optiflow.js' | relative_url }}" defer></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" defer></script>
+<script src="{{ '/assets/js/optiflow.js' | relative_url }}?v=20261117-math" defer></script>

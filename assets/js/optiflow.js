@@ -9,4 +9,8 @@ document.getElementById('copy-citation').onclick=async()=>{
  const text=document.getElementById('bibtex').textContent;
  try{await navigator.clipboard.writeText(text);document.getElementById('copy-status').textContent='BibTeX copied.';}catch{document.getElementById('copy-status').textContent='Select the citation above to copy it.';}
 };
-if(window.Vditor) Vditor.mathRender(document.querySelector('.project-page'),{cdn:'https://cdn.jsdelivr.net/npm/vditor@4.0.1',math:{engine:'KaTeX'}});
+if(window.katex){
+ document.querySelectorAll('.project-page .language-math, .project-page .math-inline').forEach(element=>{
+  katex.render(element.textContent,element,{displayMode:element.classList.contains('language-math'),throwOnError:false});
+ });
+}
