@@ -102,7 +102,10 @@ if(time>=3000){
  refs.forEach((a,j)=>scatter(a,j,panels.ref,blue,Math.sqrt(mix(1/32,q[j],w)*32)*4.4,1));
  sources.forEach((a,i)=>scatter(a,i,panels.src,pink,4.4,8));
 }
-densityContours(panels.out,d,d,pink,false,1-.4*Math.sin(d*Math.PI));
+// Keep the full X-shaped envelope while emphasizing the two high-value modes.
+ctx.fillStyle='#f9eaf1';ctx.fillRect(panels.out[0]+2,panels.out[1]+2,size-4,size-4);
+densityContours(panels.out,d,0,pink,false,1,[.12]);
+densityContours(panels.out,d,d,pink,false,1,[.32,.65,1.05,1.5]);
 
 }
 function tick(now){if(last)time=(time+Math.min(now-last,100))%19000;last=now;if(now-lastDraw>40){draw();lastDraw=now}requestAnimationFrame(tick)}
