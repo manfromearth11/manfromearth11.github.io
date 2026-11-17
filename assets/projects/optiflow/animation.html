@@ -29,7 +29,6 @@ function evolvingPolicy(panel,progress){
  if(!policyMotion){densityContours(panel,0,0,pink);return}
  const frame=policyMotion.frames[Math.round(clamp(progress)*(policyMotion.frames.length-1))];
  ctx.save();ctx.translate(...panel);ctx.scale(size/policyMotion.size,size/policyMotion.size);
- ctx.fillStyle='#f8ebf2';ctx.fillRect(0,0,policyMotion.size,policyMotion.size);
  frame.forEach((path,i)=>{
   ctx.fillStyle=policyMotion.colors[i];ctx.fill(path);
   // Keep contour strokes at 1.5 scene pixels, matching the reference panel.

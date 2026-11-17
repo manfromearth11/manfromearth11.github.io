@@ -23,7 +23,7 @@ function draw(){
  const frame=data.frames[Math.round(progress*(data.frames.length-1))];
  ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#fff';ctx.fillRect(0,0,880,880);
  ctx.translate(8,8);ctx.scale(864/400,864/400);
- ctx.fillStyle='#f8ebf2';ctx.fillRect(0,0,400,400);
+ ctx.fillStyle='#fafcfe';ctx.fillRect(0,0,400,400);
  frame.forEach((path,i)=>{ctx.fillStyle=data.colors[i];ctx.fill(path);ctx.strokeStyle='#242124';ctx.lineWidth=1.4;ctx.stroke(path)});
  if(data.centerCircle){
   const phase=clamp((progress-.5)/.5),growth=phase*phase*(3-2*phase);

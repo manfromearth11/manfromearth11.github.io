@@ -123,7 +123,7 @@ def paths(t):
                     for ring in rings) for rings in contours(t)]
 
 def plot_frame(ax, t):
-    ax.set_facecolor('#f8ebf2')
+    ax.set_facecolor('#fafcfe')
     for color, rings in zip(COLORS, contours(t)):
         for ring in rings:
             ax.add_patch(Polygon(ring, closed=True, facecolor=color, edgecolor='#242124', linewidth=1.3))
